@@ -1,6 +1,7 @@
 ---
 title: "Tutorial - como gerar os gráficos boxplot no R"
 author: "Leonardo Fernandes Wink"
+email: leonardofwink@gmail.com
 date: "26/12/2022"
 output:
   html_document:
@@ -30,66 +31,79 @@ editor_options:
 fig.align: center
 ---
 
-# Primeiro acesso {-}
-1. Se é o seu primeiro acesso, clique na caixinha `Code` no canto superior direito para baixar o código no formato `.Rmd`, ou seja, RMarkdown. 
+# Primeiro acesso {#sec-primeiro-acesso .unnumbered}
 
-2. Abra o R
-3. Clique em File -> Open file -> e selecione esse arquivo `.Rmd` que você baixou.
+1.  Se é o seu primeiro acesso, clique na caixinha `Code` no canto superior direito para baixar o código no formato `.Rmd`, ou seja, RMarkdown.
 
-Na primeira vez em que for rodar os códigos aqui no R, será solicitado que instale pacotes. Quando aparecerem caixas de diálogo, clique em **`Yes`**. Pode demorar um pouco esse processo. Para ter uma melhor visualização desse tutorial pressione as teclas `Ctrl+Shift+K` ou clique no botão `Knit` acima. 
+2.  Abra o R
+
+3.  Clique em File -\> Open file -\> e selecione esse arquivo `.Rmd` que você baixou.
+
+Na primeira vez em que for rodar os códigos aqui no R, será solicitado que instale pacotes. Quando aparecerem caixas de diálogo, clique em **`Yes`**. Pode demorar um pouco esse processo. Para ter uma melhor visualização desse tutorial pressione as teclas `Ctrl+Shift+K` ou clique no botão `Knit` acima.
 
 Sempre que quiser renderizar o código novamente use esse comando, ou caso esteja com um gráfico aberto e queira voltar a ver em formato `.html`, clique em Viewer
 
+# Comandos mais utilizados {#sec-comandos-mais-utilizados}
 
+`Ctrl+Alt+R` -\> executa TODOS os códigos de uma vez só.
 
-# Comandos mais utilizados
-`Ctrl+Alt+R` -> executa TODOS os códigos de uma vez só
+`Ctrl+Shift+K` -\> roda TODOS os códigos de uma vez só e renderiza a visualização em formatos `.html` ou `.pdf`.
 
-`Ctrl+Shift+K` -> roda TODOS os códigos de uma vez só e renderiza a visualização em formatos `.html` ou `.pdf`.
+`Ctrl+Enter` -\> executa um "parágrafo" de códigos.
 
-`Ctrl+Enter` -> executa um "parágrafo" de códigos
+`Alt+Enter` -\> executa o "parágrafo" de códigos mas sem mover o cursor.
 
-`Alt+Enter` -> executa o "parágrafo" de códigos mas sem mover o cursor.
-
-`Ctrl+Shift+C` -> para comentar ou _descomentar_ um intervalo de linhas.
+`Ctrl+Shift+C` -\> para comentar ou *descomentar* um intervalo de linhas.
 
 > As linhas de código que começam com `#` são **comentários**. Elas não impactam o resultado final do código.
 
-`Ctrl+Alt+I` -> cria um novo _code chunk_.
+`Ctrl+Alt+I` -\> cria um novo *code chunk*.
 
-`Ctrl+I` -> Indenta o código (ajusta a tabulação entre as linhas, facilita a leitura do código)  
+`Ctrl+I` -\> Indenta o código (ajusta a tabulação entre as linhas, facilita a leitura do código).
 
-> A lista completa de atalhos pode ser conferida no menu superior Tools -> Keyboard Shortcuts Help, ou através do atalho `Alt+Shift+K`.
+> A lista completa de atalhos pode ser conferida no menu superior Tools -\> Keyboard Shortcuts Help, ou através do atalho `Alt+Shift+K`.
 
-# Passo-a-passo
-> **Importante**: vou deixar comentado os pedaços de código que necessitam de alteração obrigatória com a nomenclatura `alteracao_` seguido de um número. 
-> 
+# Passo-a-passo {#sec-passo-a-passo}
+
+> **Importante**: vou deixar comentado os pedaços de código que necessitam de alteração obrigatória com a nomenclatura `alteracao_` seguido de um número.
+>
 > Para encontrar facilmente os locais que precisam ser ajustados, basta utilizar o comando `Ctrl+F` e procurar por `alteracao_` e o respectivo número listado abaixo.
 
-1. Renomear a planilha a ser importada pra facilitar a leitura.
-    * nesse caso renomeei a plan gerada pelo RSÁgua de `Dados_20221222143305.xls` para `plan_litoral_medio.xls`.
-    * você pode usar `Ctrl+F` e substituir todas as ocorrências de `plan_litoral_medio` para o nome que você deu à planilha.  
-1. Ajustar o caminho do arquivo. (**alteracao_1**)
-    * nesse exemplo estou importando diretamente da pasta de downloads do meu computador: `"C:/Users/Léo/Downloads/plan_litoral_medio.xls"`
-2. Verificar o intervalo de dados da planilha. As últimas 10 linhas costumam ser dos sumários, mas o R não entende isso. 
-    * verificar até qual linha a coluna `Índice` tem valores registrados, neste caso o `Índice` vai até 98 (+1 linha de cabeçalho) = linha 99
-    * Alterar na parte de importação o intervalo para compreender somente os dados (**alteracao_2**)
-  
+1.  Renomear a planilha a ser importada pra facilitar a leitura.
+    -   nesse caso renomeei a plan gerada pelo RSÁgua de `Dados_20221222143305.xls` para `plan_litoral_medio.xls`.
+    -   você pode usar `Ctrl+F` e substituir todas as ocorrências de `plan_litoral_medio` para o nome que você deu à planilha.\
+2.  Ajustar o caminho do arquivo. (**alteracao_1**)
+    -   nesse exemplo estou importando diretamente da pasta de downloads do meu computador: `"C:/Users/Léo/Downloads/plan_litoral_medio.xls"`
+    -   Futuramente quero implementar a integração com o [Google Sheets](#sec-ainda-precisa-ser-implementado).
+3.  Verificar o intervalo de dados da planilha. As últimas 10 linhas costumam ser dos sumários, mas o R não entende isso.
+    -   verificar até qual linha a coluna `Índice` tem valores registrados, neste caso o `Índice` vai até 98 (+1 linha de cabeçalho) = linha 99
+    -   Alterar na parte de importação o intervalo para compreender somente os dados (**alteracao_2**)
+    -   Estou tentando descobrir como economizar essa etapa. [^1]
 
-# Pacotes necessários
+[^1]: [](#sec-ainda-precisa-ser-implementado)
+
+# Pacotes necessários {#sec-pacotes-necessários .pacotes}
+
 
 ```r
-pacman::p_load(readr, rmarkdown, readxl,
-               pillar, dplyr, tidyverse, glue,
-               gapminder, knitr, kableExtra,
-               gridExtra, gtsummary, ggplot2,
-               ggbeeswarm, GGally, lubridate,
-               ggtext, bookdown
+pacman::p_load(readr, readxl, 
+               rmarkdown, 
+               # pillar, 
+               dplyr, tidyverse, glue,
+               # gapminder, 
+               knitr, kableExtra,
+               # gridExtra, gtsummary, 
+               ggplot2,
+               ggbeeswarm, GGally, 
+               lubridate,
+               ggtext,
+               bookdown
                #googlesheets4
                )
 ```
 
-# Importação dos dados
+# Importação dos dados {#sec-importação-dos-dados}
+
 
 ```r
 plan_litoral_medio <- read_excel(
@@ -126,14 +140,15 @@ plan_litoral_medio <- read_excel(
     data_coleta = ymd(data_coleta),
     ano_coleta = year(data_coleta),
   ) %>%
-  dplyr::select(
+  dplyr::select( #reordenando as colunas
     c(1:10),
     ano_coleta,
     everything()
   )
 ```
 
-# Sumários estatísticos
+# Sumários estatísticos {#sec-sumários-estatísticos}
+
 
 ```r
 sumario <- plan_litoral_medio %>%
@@ -162,8 +177,10 @@ sumario <- plan_litoral_medio %>%
           na.rm = TRUE))
 ```
 
-## Visualização da estrutura de dados da planilha
+## Visualização da estrutura de dados da planilha {#sec-visualização-da-estrutura-de-dados-da-planilha}
+
 Conferir se o tipo dos dados está correto, data em formato de data (date/dttm), código da estação como character (chr), valor medido dos parâmetros como double (dbl).
+
 
 ```r
 glimpse(plan_litoral_medio)
@@ -236,10 +253,12 @@ glimpse(plan_litoral_medio)
   </script>
 </div>
 
-# Requisitos pra gerar os gráficos
+# Requisitos pra gerar os gráficos {#sec-requisitos-pra-gerar-os-gráficos}
 
-## Definir o _theme_
-Definindo uma cor de letra e de fundo padrão a ser adotada nos gráficos.  
+## Definir o *theme*
+
+Definindo uma cor de letra e de fundo padrão a ser adotada nos gráficos.
+
 
 ```r
 theme_grafs <- function(bg = "white", 
@@ -283,8 +302,8 @@ theme_grafs <- function(bg = "white",
 }
 ```
 
-
 ## Criar função para gerar boxplots com percentis 20 e 80
+
 
 ```r
 f <- function(x) {
@@ -294,12 +313,13 @@ f <- function(x) {
 }
 ```
 
-# Gráficos
-> **Atenção:** Tomar muito cuidado com a ordem que estão dispostas as estações. Deve-se sempre respeitar o sentido nascente -> foz.
-> 
-> Conferir a ordem das estações através do #mapa-interativo
+# Gráficos {#sec-gráficos .graficos}
+
+> **Atenção:** Tomar muito cuidado com a ordem que estão dispostas as estações. Deve-se sempre respeitar o sentido nascente -\> foz.
 >
-> Para reordenar as estações, fazer como descrito no code chunk abaixo:  
+> Conferir a ordem das estações através do [mapa interativo](#sec-mapa-interativo-com-localização-dos-pontos-de-monitoramento).
+>
+> Para reordenar as estações, fazer como descrito no code chunk abaixo:
 
 
 ```r
@@ -314,9 +334,10 @@ scale_x_discrete(limits = c("87398500",
 )+
 ```
 
-> Sempre tomar cuidado com os limites do **eixo y**. Deixei como padrão o R buscar automaticamente qual o valor mínimo e máximo daquele parâmetro, mas o ideal é que se ajuste caso a caso.  
+> Sempre tomar cuidado com os limites do **eixo y**. Deixei como padrão o R buscar automaticamente qual o valor mínimo e máximo daquele parâmetro, mas o ideal é que se ajuste caso a caso.
 
-Caso queira alterar o tamanho dos outliers, alterar o `size` nesse trecho dos códigos:  
+Caso queira alterar o tamanho dos outliers, alterar o `size` nesse trecho dos códigos:
+
 
 ```r
 ggbeeswarm::geom_quasirandom(
@@ -350,8 +371,10 @@ annotate("rect",
          fill = "#8dcdeb")+ #classe 1
 ```
 
-## Parâmetros de Qualidade da Água
-### Oxigênio Dissolvido  
+## Parâmetros de Qualidade da Água {#sec-parâmetros-de-qualidade-da-água}
+
+### Oxigênio Dissolvido {#sec-oxigênio-dissolvido}
+
 
 ```r
 (graf_od <- plan_litoral_medio %>%
@@ -443,7 +466,8 @@ annotate("rect",
 
 ![Oxigênio Dissolvido](tutorial_R_files/figure-html/Gráfico OD-1.png)
 
-### DBO
+### DBO {#sec-dbo}
+
 
 ```r
 (graf_dbo <- ggplot(plan_litoral_medio,
@@ -522,7 +546,8 @@ annotate("rect",
 
 ![Demanda Bioquímica de Oxigênio](tutorial_R_files/figure-html/Gráfico DBO-1.png)
 
-### _Escherichia coli_
+### *Escherichia coli*
+
 
 ```r
 (graf_ecoli <- plan_litoral_medio %>% 
@@ -606,7 +631,8 @@ annotate("rect",
 
 ![Escherichia-coli](tutorial_R_files/figure-html/Gráfico Ecoli-1.png)
 
-### Fósforo Total
+### Fósforo Total {#sec-fósforo-total}
+
 
 ```r
 (graf_ptot <- ggplot(plan_litoral_medio,
@@ -673,7 +699,8 @@ annotate("rect",
 
 ![Fósforo total](tutorial_R_files/figure-html/Gráfico fósforo total-1.png)
 
-### Nitrogênio amoniacal
+### Nitrogênio amoniacal {#sec-nitrogênio-amoniacal}
+
 
 ```r
 (graf_namon <- ggplot(plan_litoral_medio,
@@ -741,7 +768,8 @@ annotate("rect",
 
 ![Nitrogênio Amoniacal](tutorial_R_files/figure-html/Gráfico Nitrogênio Amoniacal-1.png)
 
-### Turbidez
+### Turbidez {#sec-turbidez}
+
 
 ```r
 (graf_turb <- ggplot(plan_litoral_medio,
@@ -811,7 +839,8 @@ annotate("rect",
 
 ![turbidez](tutorial_R_files/figure-html/Gráfico Turbidez-1.png)
 
-### pH
+### pH {#sec-pH}
+
 
 ```r
 (graf_pH <- ggplot(plan_litoral_medio,
@@ -882,7 +911,8 @@ annotate("rect",
 
 ![pH-gravataí no período 1990-2020](tutorial_R_files/figure-html/Gráfico pH-1.png)
 
-### Sólidos Totais
+### Sólidos Totais {#sec-sólidos-totais}
+
 
 ```r
 (graf_solidos_totais <- ggplot(plan_litoral_medio,
@@ -942,7 +972,8 @@ annotate("rect",
 
 ![sólidos-totais](tutorial_R_files/figure-html/Gráfico SólTot-1.png)
 
-### Condutividade
+### Condutividade {#sec-condutividade}
+
 
 ```r
 (graf_cond_elet <- ggplot(plan_litoral_medio,
@@ -972,7 +1003,7 @@ annotate("rect",
    scale_y_continuous(expand = expansion(mult = c(0.01, 0.05)),
                       n.breaks = 8,
                       limits = c(0,
-                                 max(plan_litoral_medio$Condutividade, na.rm = TRUE)),
+                                 max(plan_litoral_medio$condutividade, na.rm = TRUE)),
                       labels = scales::number_format(accuracy = 1,
                                                      decimal.mark = ",",
                                                      big.mark = " "))+
@@ -1002,8 +1033,10 @@ annotate("rect",
 
 ![condutividade-eletrica](tutorial_R_files/figure-html/Gráfico cond_elet-1.png)
 
-## Análise ao longo do tempo
-Para gerar um gráfico ao longo do tempo pra cada uma das estações é necessário alterar o `ano_inicial` e o `ano_final`. Também é necessário selecionar qual parâmetro que se quer fazer a visualização.  
+## Análise ao longo do tempo {#sec-análise-ao-longo-do-tempo}
+
+Para gerar um gráfico ao longo do tempo pra cada uma das estações é necessário alterar o `ano_inicial` e o `ano_final`. Também é necessário selecionar qual parâmetro que se quer fazer a visualização.
+
 
 ```r
 ano_inicial <- 2015
@@ -1067,7 +1100,8 @@ ano_final <- 2022
 
 ![](tutorial_R_files/figure-html/gráfico ao longo do tempo-1.png)<!-- -->
 
-## Correlação
+## Correlação {#sec-correlação}
+
 
 ```r
 parametros_iqa_lit_medio <- plan_litoral_medio %>%
@@ -1144,6 +1178,7 @@ parametros_iqa_lit_medio %>%
 
 ### Correlação entre parâmetros que compõem o IQA com significância estatística
 
+
 ```r
 # Gráfico das correlações entre todos os parâmetros com significância
 correl_IQA_lit_medio <- parametros_iqa_lit_medio %>%
@@ -1153,12 +1188,15 @@ correl_IQA_lit_medio <- parametros_iqa_lit_medio %>%
 # correl_IQA_lit_medio
 ```
 
-## Salvar os gráficos
-Replicar esse modelo pros gráficos que deseja salvar.  
+## Salvar os gráficos {#sec-salvar-os-gráficos}
+
+Replicar esse modelo pros gráficos que deseja salvar.\
+1. Criar novo code chunk (`Ctrl+Alt+I`) 2. Copiar a fórmula abaixo 3. Colar nesse novo code chunk 4. Os gráficos ficarão salvos em uma pasta que irá ser criada a partir do código.
+
 
 ```r
 ggsave("graf_od.png",
-       plot = graf_od,
+       plot = graf_od, #alteracao
        path = "./graficos",
        dpi = 300,
        type = "cairo")
@@ -1176,9 +1214,10 @@ ggsave("graf_od.png",
 ## `geom_smooth()` using formula 'y ~ x'
 ```
 
+# Mapas {#sec-mapas}
 
-# Mapas
-## Pacotes pra geração de mapas
+## Pacotes pra geração de mapas {#sec-pacotes-pra-geração-de-mapas .pacotes}
+
 
 ```r
 pacman::p_load(raster, leaflet, sf
@@ -1191,9 +1230,14 @@ pacman::p_load(raster, leaflet, sf
                )
 ```
 
-## Mapa estático  
-Importando as informações necessárias pra gerar mapas de precipitação.  
-Fonte: GADM ^[https://gadm.org/maps/BRA.html], ^[https://gadm.org/data.html]
+## Mapa estático {#sec-mapa-estático}
+
+Importando as informações necessárias pra gerar mapas de precipitação.\
+Fonte: GADM [^2], [^3]
+
+[^2]: <https://gadm.org/maps/BRA.html>
+
+[^3]: <https://gadm.org/data.html>
 
 
 ```r
@@ -1235,7 +1279,8 @@ RS <- RS %>%
   st_transform (crs = 4674) #4326 = WGS84, 4674 = SIRGAS2000
 ```
 
-## Mapa interativo com localização dos pontos de monitoramento
+## Mapa interativo com localização dos pontos de monitoramento {#sec-mapa-interativo-com-localização-dos-pontos-de-monitoramento}
+
 
 ```r
 leaflet(RS) %>% 
@@ -1259,8 +1304,8 @@ leaflet(RS) %>%
 <div class="figure">
 
 ```{=html}
-<div id="htmlwidget-1d4935485ebc4c5e5736" style="width:960px;height:639.36px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-1d4935485ebc4c5e5736">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["Esri.WorldImagery",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircleMarkers","args":[[-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-30.79499,-30.79499,-30.79499,-30.79499,-30.79499,-30.79499,-30.79499,-30.79499,-30.79499,-30.79499,-30.79499,-30.79499,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995],[-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.604288,-50.604288,-50.604288,-50.604288,-50.604288,-50.604288,-50.604288,-50.604288,-50.604288,-50.604288,-50.604288,-50.604288,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839],10,null,null,{"interactive":true,"className":"","stroke":true,"color":"#03F","weight":5,"opacity":0.5,"fill":true,"fillColor":"#03F","fillOpacity":0.2},null,null,["<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul"],null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[-31.33529,-29.914471],"lng":[-51.06018,-50.318191]}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-6311b6d12d778ec07526" style="width:960px;height:639.36px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6311b6d12d778ec07526">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["Esri.WorldImagery",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircleMarkers","args":[[-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-29.914471,-30.79499,-30.79499,-30.79499,-30.79499,-30.79499,-30.79499,-30.79499,-30.79499,-30.79499,-30.79499,-30.79499,-30.79499,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-30.95239,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.260818,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-31.33529,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995,-30.143995],[-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.318191,-50.604288,-50.604288,-50.604288,-50.604288,-50.604288,-50.604288,-50.604288,-50.604288,-50.604288,-50.604288,-50.604288,-50.604288,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.711107,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-50.968189,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-51.06018,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839,-50.548839],10,null,null,{"interactive":true,"className":"","stroke":true,"color":"#03F","weight":5,"opacity":0.5,"fill":true,"fillColor":"#03F","fillOpacity":0.2},null,null,["<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87332500 <br> <b>Recurso hídrico:<\/b> Lagoa dos Barros <br> <b>Município:<\/b> Osorio","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420130 <br> <b>Recurso hídrico:<\/b> Lagoa da Figueira <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420150 <br> <b>Recurso hídrico:<\/b> Lagoa São Simão <br> <b>Município:<\/b> Mostardas","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420350 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87420500 <br> <b>Recurso hídrico:<\/b> Lagoa do Peixe <br> <b>Município:<\/b> Tavares","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul","<b>Estação:<\/b> 87510010 <br> <b>Recurso hídrico:<\/b> Rio Capivari <br> <b>Município:<\/b> Capivari Do Sul"],null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[-31.33529,-29.914471],"lng":[-51.06018,-50.318191]}},"evals":[],"jsHooks":[]}</script>
 ```
 
 <p class="caption">Mapa interativo</p>
@@ -1268,205 +1313,20 @@ leaflet(RS) %>%
 
 ## Mapa de precipitação anual
 
-```r
-st_centroid(RS)
-```
-
-```
-## Simple feature collection with 467 features and 13 fields
-## Geometry type: POINT
-## Dimension:     XY
-## Bounding box:  xmin: -57.33034 ymin: -33.6509 xmax: -49.80991 ymax: -27.17079
-## Geodetic CRS:  SIRGAS 2000
-## First 10 features:
-##      GID_0 NAME_0    GID_1            NAME_1 NL_NAME_1       GID_2      NAME_2
-## 2826   BRA Brazil BRA.21_1 Rio Grande do Sul      <NA>  BRA.21.1_1  Água Santa
-## 2937   BRA Brazil BRA.21_1 Rio Grande do Sul      <NA>  BRA.21.2_1       Agudo
-## 3048   BRA Brazil BRA.21_1 Rio Grande do Sul      <NA>  BRA.21.3_1   Ajuricaba
-## 3159   BRA Brazil BRA.21_1 Rio Grande do Sul      <NA>  BRA.21.4_1     Alecrim
-## 3238   BRA Brazil BRA.21_1 Rio Grande do Sul      <NA>  BRA.21.5_1    Alegrete
-## 3249   BRA Brazil BRA.21_1 Rio Grande do Sul      <NA>  BRA.21.6_1     Alegria
-## 3260   BRA Brazil BRA.21_1 Rio Grande do Sul      <NA>  BRA.21.7_1    Alpestre
-## 3271   BRA Brazil BRA.21_1 Rio Grande do Sul      <NA>  BRA.21.8_1 Alto Alegre
-## 3282   BRA Brazil BRA.21_1 Rio Grande do Sul      <NA>  BRA.21.9_1  Alto Feliz
-## 2827   BRA Brazil BRA.21_1 Rio Grande do Sul      <NA> BRA.21.10_1    Alvorada
-##      VARNAME_2 NL_NAME_2    TYPE_2    ENGTYPE_2 CC_2 HASC_2
-## 2826      <NA>      <NA> Município Municipality <NA>   <NA>
-## 2937      <NA>      <NA> Município Municipality <NA>   <NA>
-## 3048      <NA>      <NA> Município Municipality <NA>   <NA>
-## 3159      <NA>      <NA> Município Municipality <NA>   <NA>
-## 3238      <NA>      <NA> Município Municipality <NA>   <NA>
-## 3249      <NA>      <NA> Município Municipality <NA>   <NA>
-## 3260      <NA>      <NA> Município Municipality <NA>   <NA>
-## 3271      <NA>      <NA> Município Municipality <NA>   <NA>
-## 3282      <NA>      <NA> Município Municipality <NA>   <NA>
-## 2827      <NA>      <NA> Município Municipality <NA>   <NA>
-##                         geometry
-## 2826 POINT (-52.03368 -28.21249)
-## 2937 POINT (-53.22639 -29.60797)
-## 3048 POINT (-53.73716 -28.21035)
-## 3159 POINT (-54.78171 -27.65349)
-## 3238 POINT (-55.83603 -29.76413)
-## 3249 POINT (-54.05603 -27.81399)
-## 3260 POINT (-53.06363 -27.21622)
-## 3271 POINT (-52.98888 -28.80481)
-## 3282 POINT (-51.30519 -29.36316)
-## 2827 POINT (-51.03728 -29.99504)
-```
-
-```r
-Prec <- getData(
-  "worldclim", 
-  var = "prec", 
-  res = 0.5, 
-  lat = -27.08058, #procurar lat long no google e alterar aqui
-  lon = -51.217699 
-)
-Prec_RS    <- crop(Prec, RS)
-Prec_RS    <- Prec_RS <- mask(Prec_RS, RS)
-PPAnual_RS <- do.call("sum", 
-                       unstack(Prec_RS))
-plot(PPAnual_RS)
-```
-
-![](tutorial_R_files/figure-html/Extraindo os dados raster de precipitação-1.png)<!-- -->
 
 
-```r
-vls <- rasterToPoints(Prec_RS) %>% 
-  as_tibble() %>% 
-  gather(var, value, -x, -y) %>% 
-  mutate(mes = parse_number(var)) %>% 
-  inner_join(., lbl, by = 'mes') %>% 
-  dplyr::select(x, y, month_abb, value) %>% 
-  mutate(month_abb = factor(month_abb, levels = month.abb))
 
-vls %>% 
-  filter(month_abb == 'Jan')
-```
-
-```
-## # A tibble: 217,860 x 4
-##        x     y month_abb value
-##    <dbl> <dbl> <fct>     <dbl>
-##  1 -53.1 -27.1 Jan         165
-##  2 -53.0 -27.1 Jan         165
-##  3 -53.0 -27.1 Jan         165
-##  4 -53.0 -27.1 Jan         166
-##  5 -53.0 -27.1 Jan         166
-##  6 -53.4 -27.1 Jan         161
-##  7 -53.4 -27.1 Jan         161
-##  8 -53.4 -27.1 Jan         161
-##  9 -53.1 -27.1 Jan         165
-## 10 -53.1 -27.1 Jan         165
-## # ... with 217,850 more rows
-## # i Use `print(n = ...)` to see more rows
-```
-
-```r
-summary(vls$value) #descobre o valor mínimo, médio e máximo de precipitação
-```
-
-```
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    39.0   128.0   141.0   140.3   154.0   206.0
-```
 
 ## Mapa com precipitação mensal
+
 Caso queira gerar um mapa com a precipitação mensal, alternar o include para `TRUE`. A geração desse mapa demanda bastante processamento, recomendável manter como `FALSE`.
 
-```r
-cores1<- c('#ff4223','#f19e21','#ffee21','#00ffff', '#10aebe', '#165dff','#9331dc')
-cores2<- c('#9331dc', '#165dff', '#10aebe', '#00ffff', '#ffee21', '#f19e21', '#ff4223')
-
-(gg <- ggplot(vls)  +
-    geom_tile(aes(x = x, 
-                  y =  y, 
-                  fill = value)) +
-    scale_fill_gradientn(colours = cores1, 
-                         na.value = 'white', 
-                         limits = c(0, 250), 
-                         breaks = seq(0, 250, 25)) +
-    geom_sf(data = RS, 
-            fill = NA, 
-            color = 'black', 
-            size = 0.2)+
-    # geom_sf_text(data = RS_xy,
-    #              aes(x = X,
-    #                  y = Y,
-    #                  label = NAME_1
-    #                  ),
-    #              size = 0.5,
-    #              color="black",
-    #              # fontfamily = "serif",
-    #              # fontface="italic"
-    # )+
-    facet_wrap(~ month_abb) +
-    # scale_x_continuous(breaks = c(-72.5, -71.0, -69.5)) +
-    ggtitle("Precipitação mensal - RS")+
-    labs(title = 'Precipitação Mensal - RS',
-         fill = 'mm',  
-         x = 'Longitude', 
-         y = 'Latitude', 
-         caption = "Leonardo Fernandes Wink") +
-    labs(
-      caption = "Fonte: https://osmdata.openstreetmap.de/"
-    )+
-    theme_bw() +
-    theme(
-      plot.background = element_rect(fill = "white"),
-      panel.grid.major = element_blank(),
-      panel.grid.minor = element_blank(),
-      legend.key.width = unit(5, 'line'),
-      legend.position = 'bottom',
-      panel.border = element_rect(size = 2, 
-                                  color="white"),
-      plot.title = element_text(
-        size = 16, 
-        hjust = 0.5, 
-        color = "black", 
-        face = "bold"
-      ),
-      axis.text.x = element_text(
-        face="bold", 
-        color="black", 
-        size=8
-      ),
-      axis.text.y = element_text(
-        angle = 90,
-        face="bold", 
-        color="black", 
-        size=8
-      ),
-      strip.text = element_text(
-        face= 'bold', 
-        size= 14, 
-        hjust= 0.5, 
-        color= 'black'
-      ),
-      strip.background = element_rect(fill='white'),
-      plot.subtitle = element_text(
-        size = 11, 
-        hjust = 0.8, 
-        face = "italic", 
-        color = "red", #"#4e4d47"
-        family="serif"
-      ),
-      plot.caption = element_text(
-        size = 10, 
-        hjust = 0.95, 
-        color = "black",
-      )
-    ) +
-    guides(shape = guide_legend(override.aes = list(size = 10)))
-)
-```
-
-![](tutorial_R_files/figure-html/mapas-precipitacao-mensal-1.png)<!-- -->
 
 
-# Links úteis
-## Cheatsheets
+# Links úteis {#sec-links-úteis}
+
+## Cheatsheets {#sec-cheatsheets}
+
 [Cheatsheets](https://posit.co/resources/cheatsheets/)
 
 [GitHub com as versões mais atualizadas](https://github.com/rstudio/cheatsheets/)
@@ -1479,7 +1339,7 @@ cores2<- c('#9331dc', '#165dff', '#10aebe', '#00ffff', '#ffee21', '#f19e21', '#f
 
 [dplyr cheatsheet](https://posit.co/wp-content/uploads/2022/10/data-transformation-1.pdf)
 
-## Rmarkdown
+## Rmarkdown {#sec-rmarkdown}
 
 [Tutorial sobre RMarkdown](https://youtu.be/18AUZOWAazg)
 
@@ -1487,24 +1347,27 @@ cores2<- c('#9331dc', '#165dff', '#10aebe', '#00ffff', '#ffee21', '#f19e21', '#f
 
 [RMarkdown: The definitive guide](https://bookdown.org/yihui/rmarkdown/)
 
-## Canais no Youtube
+[knitr](https://yihui.org/knitr/options/){.pacotes}
+
+## Canais no Youtube {#sec-canais-no-youtube}
 
 [Pat Schloss](https://www.youtube.com/@Riffomonas) #esse cara é genial
 
 [Ambiental Pro Dev](https://www.youtube.com/@ambientalprodev5379)
 
-# Ainda precisa ser implementado {-}
-* Tornar a coluna de `chuva_24h` como factor.
-* ~~Tornar a coluna de `municipio` com apenas a primeira letra maiúscula.~~
-* Sincronização via GitHub
-* Aprender a gerar o mapa de precipitação mensal pra todo o RS
-    * O RS está entre 2 fusos, então acaba "partindo no meio" a figura
-* Talvez pensar numa integração via Google Sheets.
-    
+# Ainda precisa ser implementado {#sec-ainda-precisa-ser-implementado .unnumbered}
 
-# Informações adicionais {-}
-E-mail para contato: [leonardofwink@gmail.com](leonardofwink@gmail.com)  
+-   Tornar a coluna de `chuva_24h` como factor.
+-   ~~Tornar a coluna de `municipio` com apenas a primeira letra maiúscula.~~
+-   Sincronização via GitHub
+-   Aprender a gerar o mapa de precipitação mensal pra todo o RS
+    -   O RS está entre 2 fusos, então acaba "partindo no meio" a figura
+-   Talvez pensar numa integração via Google Sheets.
 
-GitHub: [https://github.com/leonardofwink/](https://github.com/leonardofwink/)
+# Informações adicionais {#sec-informações-adicionais .unnumbered}
 
-LinkedIn: [https://www.linkedin.com/in/leonardofwink/](https://www.linkedin.com/in/leonardofwink/)
+E-mail para contato: [leonardofwink\@gmail.com](leonardofwink@gmail.com)
+
+GitHub: <https://github.com/leonardofwink/>
+
+LinkedIn: <https://www.linkedin.com/in/leonardofwink/>

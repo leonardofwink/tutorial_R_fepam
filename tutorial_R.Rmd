@@ -1,6 +1,7 @@
 ---
 title: "Tutorial - como gerar os gráficos boxplot no R"
 author: "Leonardo Fernandes Wink"
+email: leonardofwink@gmail.com
 date: "`r format(Sys.time(), '%d/%m/%Y')`"
 output:
   html_document:
@@ -30,65 +31,78 @@ editor_options:
 fig.align: center
 ---
 
-# Primeiro acesso {-}
-1. Se é o seu primeiro acesso, clique na caixinha `Code` no canto superior direito para baixar o código no formato `.Rmd`, ou seja, RMarkdown. 
+# Primeiro acesso {#sec-primeiro-acesso .unnumbered}
 
-2. Abra o R
-3. Clique em File -> Open file -> e selecione esse arquivo `.Rmd` que você baixou.
+1.  Se é o seu primeiro acesso, clique na caixinha `Code` no canto superior direito para baixar o código no formato `.Rmd`, ou seja, RMarkdown.
 
-Na primeira vez em que for rodar os códigos aqui no R, será solicitado que instale pacotes. Quando aparecerem caixas de diálogo, clique em **`Yes`**. Pode demorar um pouco esse processo. Para ter uma melhor visualização desse tutorial pressione as teclas `Ctrl+Shift+K` ou clique no botão `Knit` acima. 
+2.  Abra o R
+
+3.  Clique em File -\> Open file -\> e selecione esse arquivo `.Rmd` que você baixou.
+
+Na primeira vez em que for rodar os códigos aqui no R, será solicitado que instale pacotes. Quando aparecerem caixas de diálogo, clique em **`Yes`**. Pode demorar um pouco esse processo. Para ter uma melhor visualização desse tutorial pressione as teclas `Ctrl+Shift+K` ou clique no botão `Knit` acima.
 
 Sempre que quiser renderizar o código novamente use esse comando, ou caso esteja com um gráfico aberto e queira voltar a ver em formato `.html`, clique em Viewer
 
+# Comandos mais utilizados {#sec-comandos-mais-utilizados}
 
+`Ctrl+Alt+R` -\> executa TODOS os códigos de uma vez só.
 
-# Comandos mais utilizados
-`Ctrl+Alt+R` -> executa TODOS os códigos de uma vez só
+`Ctrl+Shift+K` -\> roda TODOS os códigos de uma vez só e renderiza a visualização em formatos `.html` ou `.pdf`.
 
-`Ctrl+Shift+K` -> roda TODOS os códigos de uma vez só e renderiza a visualização em formatos `.html` ou `.pdf`.
+`Ctrl+Enter` -\> executa um "parágrafo" de códigos.
 
-`Ctrl+Enter` -> executa um "parágrafo" de códigos
+`Alt+Enter` -\> executa o "parágrafo" de códigos mas sem mover o cursor.
 
-`Alt+Enter` -> executa o "parágrafo" de códigos mas sem mover o cursor.
-
-`Ctrl+Shift+C` -> para comentar ou _descomentar_ um intervalo de linhas.
+`Ctrl+Shift+C` -\> para comentar ou *descomentar* um intervalo de linhas.
 
 > As linhas de código que começam com `#` são **comentários**. Elas não impactam o resultado final do código.
 
-`Ctrl+Alt+I` -> cria um novo _code chunk_.
+`Ctrl+Alt+I` -\> cria um novo *code chunk*.
 
-`Ctrl+I` -> Indenta o código (ajusta a tabulação entre as linhas, facilita a leitura do código)  
+`Ctrl+I` -\> Indenta o código (ajusta a tabulação entre as linhas, facilita a leitura do código).
 
-> A lista completa de atalhos pode ser conferida no menu superior Tools -> Keyboard Shortcuts Help, ou através do atalho `Alt+Shift+K`.
+> A lista completa de atalhos pode ser conferida no menu superior Tools -\> Keyboard Shortcuts Help, ou através do atalho `Alt+Shift+K`.
 
-# Passo-a-passo
-> **Importante**: vou deixar comentado os pedaços de código que necessitam de alteração obrigatória com a nomenclatura `alteracao_` seguido de um número. 
-> 
+# Passo-a-passo {#sec-passo-a-passo}
+
+> **Importante**: vou deixar comentado os pedaços de código que necessitam de alteração obrigatória com a nomenclatura `alteracao_` seguido de um número.
+>
 > Para encontrar facilmente os locais que precisam ser ajustados, basta utilizar o comando `Ctrl+F` e procurar por `alteracao_` e o respectivo número listado abaixo.
 
-1. Renomear a planilha a ser importada pra facilitar a leitura.
-    * nesse caso renomeei a plan gerada pelo RSÁgua de `Dados_20221222143305.xls` para `plan_litoral_medio.xls`.
-    * você pode usar `Ctrl+F` e substituir todas as ocorrências de `plan_litoral_medio` para o nome que você deu à planilha.  
-1. Ajustar o caminho do arquivo. (**alteracao_1**)
-    * nesse exemplo estou importando diretamente da pasta de downloads do meu computador: `"C:/Users/Léo/Downloads/plan_litoral_medio.xls"`
-2. Verificar o intervalo de dados da planilha. As últimas 10 linhas costumam ser dos sumários, mas o R não entende isso. 
-    * verificar até qual linha a coluna `Índice` tem valores registrados, neste caso o `Índice` vai até 98 (+1 linha de cabeçalho) = linha 99
-    * Alterar na parte de importação o intervalo para compreender somente os dados (**alteracao_2**)
-  
+1.  Renomear a planilha a ser importada pra facilitar a leitura.
+    -   nesse caso renomeei a plan gerada pelo RSÁgua de `Dados_20221222143305.xls` para `plan_litoral_medio.xls`.
+    -   você pode usar `Ctrl+F` e substituir todas as ocorrências de `plan_litoral_medio` para o nome que você deu à planilha.\
+2.  Ajustar o caminho do arquivo. (**alteracao_1**)
+    -   nesse exemplo estou importando diretamente da pasta de downloads do meu computador: `"C:/Users/Léo/Downloads/plan_litoral_medio.xls"`
+    -   Futuramente quero implementar a integração com o [Google Sheets](#sec-ainda-precisa-ser-implementado).
+3.  Verificar o intervalo de dados da planilha. As últimas 10 linhas costumam ser dos sumários, mas o R não entende isso.
+    -   verificar até qual linha a coluna `Índice` tem valores registrados, neste caso o `Índice` vai até 98 (+1 linha de cabeçalho) = linha 99
+    -   Alterar na parte de importação o intervalo para compreender somente os dados (**alteracao_2**)
+    -   Estou tentando descobrir como economizar essa etapa. [^1]
 
-# Pacotes necessários
+[^1]: [](#sec-ainda-precisa-ser-implementado)
+
+# Pacotes necessários {#sec-pacotes-necessários .pacotes}
+
 ```{r Pacotes necessários, message = FALSE, warning = TRUE}
-pacman::p_load(readr, rmarkdown, readxl,
-               pillar, dplyr, tidyverse, glue,
-               gapminder, knitr, kableExtra,
-               gridExtra, gtsummary, ggplot2,
-               ggbeeswarm, GGally, lubridate,
-               ggtext, bookdown
+pacman::p_load(readr, readxl, 
+               rmarkdown, 
+               # pillar, 
+               dplyr, tidyverse, glue,
+               # gapminder, 
+               knitr, kableExtra,
+               # gridExtra, gtsummary, 
+               ggplot2,
+               ggbeeswarm, GGally, 
+               lubridate,
+               ggtext,
+               bookdown
                #googlesheets4
                )
 ```
 
-# Importação dos dados
+# Importação dos dados {#sec-importação-dos-dados}
+
 ```{r Importando os dados}
 plan_litoral_medio <- read_excel(
   "C:/Users/Léo/Downloads/plan_litoral_medio.xls", #alteracao_1
@@ -124,14 +138,15 @@ plan_litoral_medio <- read_excel(
     data_coleta = ymd(data_coleta),
     ano_coleta = year(data_coleta),
   ) %>%
-  dplyr::select(
+  dplyr::select( #reordenando as colunas
     c(1:10),
     ano_coleta,
     everything()
   )
 ```
 
-# Sumários estatísticos
+# Sumários estatísticos {#sec-sumários-estatísticos}
+
 ```{r sumario}
 sumario <- plan_litoral_medio %>%
   dplyr::select(cod_estacao, oxigenio_dissolvido, ano_coleta) %>%
@@ -159,8 +174,10 @@ sumario <- plan_litoral_medio %>%
           na.rm = TRUE))
 ```
 
-## Visualização da estrutura de dados da planilha
+## Visualização da estrutura de dados da planilha {#sec-visualização-da-estrutura-de-dados-da-planilha}
+
 Conferir se o tipo dos dados está correto, data em formato de data (date/dttm), código da estação como character (chr), valor medido dos parâmetros como double (dbl).
+
 ```{r estrutura da planilha}
 glimpse(plan_litoral_medio)
 # str(plan_litoral_medio) #outra maneira de visualizar a eSTRutura 
@@ -172,10 +189,12 @@ paged_table(plan_litoral_medio,
                            cols.print = 10))
 ```
 
-# Requisitos pra gerar os gráficos
+# Requisitos pra gerar os gráficos {#sec-requisitos-pra-gerar-os-gráficos}
 
-## Definir o _theme_
-Definindo uma cor de letra e de fundo padrão a ser adotada nos gráficos.  
+## Definir o *theme*
+
+Definindo uma cor de letra e de fundo padrão a ser adotada nos gráficos.
+
 ```{r setting theme}
 theme_grafs <- function(bg = "white", 
                         coloracao_letra = "black") {
@@ -218,8 +237,8 @@ theme_grafs <- function(bg = "white",
 }
 ```
 
-
 ## Criar função para gerar boxplots com percentis 20 e 80
+
 ```{r funcao percentil 20 e 80}
 f <- function(x) {
   r <- quantile(x, probs = c(0.10, 0.20, 0.50, 0.80, 0.90))
@@ -228,12 +247,13 @@ f <- function(x) {
 }
 ```
 
-# Gráficos
-> **Atenção:** Tomar muito cuidado com a ordem que estão dispostas as estações. Deve-se sempre respeitar o sentido nascente -> foz.
-> 
-> Conferir a ordem das estações através do #mapa-interativo
+# Gráficos {#sec-gráficos .graficos}
+
+> **Atenção:** Tomar muito cuidado com a ordem que estão dispostas as estações. Deve-se sempre respeitar o sentido nascente -\> foz.
 >
-> Para reordenar as estações, fazer como descrito no code chunk abaixo:  
+> Conferir a ordem das estações através do [mapa interativo](#sec-mapa-interativo-com-localização-dos-pontos-de-monitoramento).
+>
+> Para reordenar as estações, fazer como descrito no code chunk abaixo:
 
 ```{r reordenar estações no gráfico, eval = FALSE}
 scale_x_discrete(limits = c("87398500",
@@ -247,9 +267,10 @@ scale_x_discrete(limits = c("87398500",
 )+
 ```
 
-> Sempre tomar cuidado com os limites do **eixo y**. Deixei como padrão o R buscar automaticamente qual o valor mínimo e máximo daquele parâmetro, mas o ideal é que se ajuste caso a caso.  
+> Sempre tomar cuidado com os limites do **eixo y**. Deixei como padrão o R buscar automaticamente qual o valor mínimo e máximo daquele parâmetro, mas o ideal é que se ajuste caso a caso.
 
-Caso queira alterar o tamanho dos outliers, alterar o `size` nesse trecho dos códigos:  
+Caso queira alterar o tamanho dos outliers, alterar o `size` nesse trecho dos códigos:
+
 ```{r alterar tamanho do outlier, eval = FALSE}
 ggbeeswarm::geom_quasirandom(
      # grouponX = FALSE,
@@ -281,9 +302,11 @@ annotate("rect",
          fill = "#8dcdeb")+ #classe 1
 ```
 
-## Parâmetros de Qualidade da Água
-### Oxigênio Dissolvido  
-```{r Gráfico OD, warning = FALSE, message = FALSE, fig.cap="Oxigênio Dissolvido"}
+## Parâmetros de Qualidade da Água {#sec-parâmetros-de-qualidade-da-água}
+
+### Oxigênio Dissolvido {#sec-oxigênio-dissolvido}
+
+```{r Gráfico OD, fig.cap="Oxigênio Dissolvido", message=FALSE, warning=FALSE}
 (graf_od <- plan_litoral_medio %>%
     ggplot(
       aes(
@@ -371,7 +394,8 @@ annotate("rect",
 )
 ```
 
-### DBO
+### DBO {#sec-dbo}
+
 ```{r Gráfico DBO, warning = FALSE, message = FALSE, fig.cap="Demanda Bioquímica de Oxigênio"}
 (graf_dbo <- ggplot(plan_litoral_medio,
                aes(x = cod_estacao,
@@ -447,7 +471,8 @@ annotate("rect",
 )
 ```
 
-### _Escherichia coli_
+### *Escherichia coli*
+
 ```{r Gráfico Ecoli, warning = FALSE, message = FALSE, fig.cap="Escherichia-coli"}
 (graf_ecoli <- plan_litoral_medio %>% 
    ggplot(aes(cod_estacao,
@@ -528,7 +553,8 @@ annotate("rect",
 )
 ```
 
-### Fósforo Total
+### Fósforo Total {#sec-fósforo-total}
+
 ```{r Gráfico fósforo total, warning = FALSE, message = FALSE, fig.cap="Fósforo total"}
 (graf_ptot <- ggplot(plan_litoral_medio,
                      aes(cod_estacao,
@@ -592,7 +618,8 @@ annotate("rect",
 )
 ```
 
-### Nitrogênio amoniacal
+### Nitrogênio amoniacal {#sec-nitrogênio-amoniacal}
+
 ```{r Gráfico Nitrogênio Amoniacal, warning = FALSE, message = FALSE, fig.cap="Nitrogênio Amoniacal"}
 (graf_namon <- ggplot(plan_litoral_medio,
                  aes(cod_estacao,
@@ -657,7 +684,8 @@ annotate("rect",
 )
 ```
 
-### Turbidez
+### Turbidez {#sec-turbidez}
+
 ```{r Gráfico Turbidez, fig.cap="turbidez", warning = FALSE, message = FALSE}
 (graf_turb <- ggplot(plan_litoral_medio,
                    aes(cod_estacao,
@@ -724,7 +752,8 @@ annotate("rect",
 )
 ```
 
-### pH
+### pH {#sec-pH}
+
 ```{r Gráfico pH, fig.cap="pH-gravataí no período 1990-2020", warning = FALSE, message = FALSE}
 (graf_pH <- ggplot(plan_litoral_medio,
                  aes(cod_estacao,
@@ -792,7 +821,8 @@ annotate("rect",
 )
 ```
 
-### Sólidos Totais
+### Sólidos Totais {#sec-sólidos-totais}
+
 ```{r Gráfico SólTot, fig.cap="sólidos-totais", warning = FALSE, message = FALSE}
 (graf_solidos_totais <- ggplot(plan_litoral_medio,
                                aes(cod_estacao,
@@ -849,7 +879,8 @@ annotate("rect",
 )
 ```
 
-### Condutividade
+### Condutividade {#sec-condutividade}
+
 ```{r Gráfico cond_elet, fig.cap="condutividade-eletrica", warning = FALSE, message = FALSE}
 (graf_cond_elet <- ggplot(plan_litoral_medio,
                         aes(cod_estacao,
@@ -878,7 +909,7 @@ annotate("rect",
    scale_y_continuous(expand = expansion(mult = c(0.01, 0.05)),
                       n.breaks = 8,
                       limits = c(0,
-                                 max(plan_litoral_medio$Condutividade, na.rm = TRUE)),
+                                 max(plan_litoral_medio$condutividade, na.rm = TRUE)),
                       labels = scales::number_format(accuracy = 1,
                                                      decimal.mark = ",",
                                                      big.mark = " "))+
@@ -906,8 +937,10 @@ annotate("rect",
 )
 ```
 
-## Análise ao longo do tempo
-Para gerar um gráfico ao longo do tempo pra cada uma das estações é necessário alterar o `ano_inicial` e o `ano_final`. Também é necessário selecionar qual parâmetro que se quer fazer a visualização.  
+## Análise ao longo do tempo {#sec-análise-ao-longo-do-tempo}
+
+Para gerar um gráfico ao longo do tempo pra cada uma das estações é necessário alterar o `ano_inicial` e o `ano_final`. Também é necessário selecionar qual parâmetro que se quer fazer a visualização.
+
 ```{r gráfico ao longo do tempo, warning = FALSE, message = FALSE}
 ano_inicial <- 2015
 ano_final <- 2022
@@ -968,7 +1001,8 @@ ano_final <- 2022
 )
 ```
 
-## Correlação
+## Correlação {#sec-correlação}
+
 ```{r Correlação, fig.cap="correlação-parametros-qualidade-agua", time_it = TRUE, warning=FALSE, message = FALSE,}
 parametros_iqa_lit_medio <- plan_litoral_medio %>%
   dplyr::select(cod_estacao,
@@ -1041,6 +1075,7 @@ parametros_iqa_lit_medio %>%
 ```
 
 ### Correlação entre parâmetros que compõem o IQA com significância estatística
+
 ```{r graf-correl-estatistica, time_it = TRUE, warning=FALSE, message = FALSE}
 # Gráfico das correlações entre todos os parâmetros com significância
 correl_IQA_lit_medio <- parametros_iqa_lit_medio %>%
@@ -1050,19 +1085,23 @@ correl_IQA_lit_medio <- parametros_iqa_lit_medio %>%
 # correl_IQA_lit_medio
 ```
 
-## Salvar os gráficos
-Replicar esse modelo pros gráficos que deseja salvar.  
+## Salvar os gráficos {#sec-salvar-os-gráficos}
+
+Replicar esse modelo pros gráficos que deseja salvar.\
+1. Criar novo code chunk (`Ctrl+Alt+I`) 2. Copiar a fórmula abaixo 3. Colar nesse novo code chunk 4. Os gráficos ficarão salvos em uma pasta que irá ser criada a partir do código.
+
 ```{r salvar-graficos}
 ggsave("graf_od.png",
-       plot = graf_od,
+       plot = graf_od, #alteracao
        path = "./graficos",
        dpi = 300,
        type = "cairo")
 ```
 
+# Mapas {#sec-mapas}
 
-# Mapas
-## Pacotes pra geração de mapas
+## Pacotes pra geração de mapas {#sec-pacotes-pra-geração-de-mapas .pacotes}
+
 ```{r pacotes-geoespaciais, message = TRUE, warning = FALSE}
 pacman::p_load(raster, leaflet, sf
                # prettymapr, rjson, rosm,
@@ -1074,9 +1113,14 @@ pacman::p_load(raster, leaflet, sf
                )
 ```
 
-## Mapa estático  
-Importando as informações necessárias pra gerar mapas de precipitação.  
-Fonte: GADM ^[https://gadm.org/maps/BRA.html], ^[https://gadm.org/data.html]
+## Mapa estático {#sec-mapa-estático}
+
+Importando as informações necessárias pra gerar mapas de precipitação.\
+Fonte: GADM [^2], [^3]
+
+[^2]: <https://gadm.org/maps/BRA.html>
+
+[^3]: <https://gadm.org/data.html>
 
 ```{r mapa-estatico, fig.cap = "Mapa estático do RS"}
 Brasil <- getData(
@@ -1113,7 +1157,8 @@ RS <- RS %>%
   st_transform (crs = 4674) #4326 = WGS84, 4674 = SIRGAS2000
 ```
 
-## Mapa interativo com localização dos pontos de monitoramento
+## Mapa interativo com localização dos pontos de monitoramento {#sec-mapa-interativo-com-localização-dos-pontos-de-monitoramento}
+
 ```{r mapa-interativo, fig.cap = "Mapa interativo"}
 leaflet(RS) %>% 
   addProviderTiles(
@@ -1134,7 +1179,8 @@ leaflet(RS) %>%
 ```
 
 ## Mapa de precipitação anual
-```{r Extraindo os dados raster de precipitação, message = FALSE, warning = FALSE}
+
+```{r Extraindo os dados raster de precipitação, message = FALSE, warning = FALSE, include = FALSE}
 st_centroid(RS)
 
 Prec <- getData(
@@ -1151,7 +1197,7 @@ PPAnual_RS <- do.call("sum",
 plot(PPAnual_RS)
 ```
 
-```{r Elaborando os meses de precipitação, message = FALSE, warning = FALSE}
+```{r Elaborando os meses de precipitação, message = FALSE, warning = FALSE, include = FALSE}
 vls <- rasterToPoints(Prec_RS) %>% 
   as_tibble() %>% 
   gather(var, value, -x, -y) %>% 
@@ -1167,8 +1213,10 @@ summary(vls$value) #descobre o valor mínimo, médio e máximo de precipitação
 ```
 
 ## Mapa com precipitação mensal
+
 Caso queira gerar um mapa com a precipitação mensal, alternar o include para `TRUE`. A geração desse mapa demanda bastante processamento, recomendável manter como `FALSE`.
-```{r mapas-precipitacao-mensal, include = TRUE}
+
+```{r mapas-precipitacao-mensal, include = FALSE}
 cores1<- c('#ff4223','#f19e21','#ffee21','#00ffff', '#10aebe', '#165dff','#9331dc')
 cores2<- c('#9331dc', '#165dff', '#10aebe', '#00ffff', '#ffee21', '#f19e21', '#ff4223')
 
@@ -1255,9 +1303,10 @@ cores2<- c('#9331dc', '#165dff', '#10aebe', '#00ffff', '#ffee21', '#f19e21', '#f
 )
 ```
 
+# Links úteis {#sec-links-úteis}
 
-# Links úteis
-## Cheatsheets
+## Cheatsheets {#sec-cheatsheets}
+
 [Cheatsheets](https://posit.co/resources/cheatsheets/)
 
 [GitHub com as versões mais atualizadas](https://github.com/rstudio/cheatsheets/)
@@ -1270,7 +1319,7 @@ cores2<- c('#9331dc', '#165dff', '#10aebe', '#00ffff', '#ffee21', '#f19e21', '#f
 
 [dplyr cheatsheet](https://posit.co/wp-content/uploads/2022/10/data-transformation-1.pdf)
 
-## Rmarkdown
+## Rmarkdown {#sec-rmarkdown}
 
 [Tutorial sobre RMarkdown](https://youtu.be/18AUZOWAazg)
 
@@ -1278,24 +1327,27 @@ cores2<- c('#9331dc', '#165dff', '#10aebe', '#00ffff', '#ffee21', '#f19e21', '#f
 
 [RMarkdown: The definitive guide](https://bookdown.org/yihui/rmarkdown/)
 
-## Canais no Youtube
+[knitr](https://yihui.org/knitr/options/){.pacotes}
+
+## Canais no Youtube {#sec-canais-no-youtube}
 
 [Pat Schloss](https://www.youtube.com/@Riffomonas) #esse cara é genial
 
 [Ambiental Pro Dev](https://www.youtube.com/@ambientalprodev5379)
 
-# Ainda precisa ser implementado {-}
-* Tornar a coluna de `chuva_24h` como factor.
-* ~~Tornar a coluna de `municipio` com apenas a primeira letra maiúscula.~~
-* Sincronização via GitHub
-* Aprender a gerar o mapa de precipitação mensal pra todo o RS
-    * O RS está entre 2 fusos, então acaba "partindo no meio" a figura
-* Talvez pensar numa integração via Google Sheets.
-    
+# Ainda precisa ser implementado {#sec-ainda-precisa-ser-implementado .unnumbered}
 
-# Informações adicionais {-}
-E-mail para contato: [leonardofwink@gmail.com](leonardofwink@gmail.com)  
+-   Tornar a coluna de `chuva_24h` como factor.
+-   ~~Tornar a coluna de `municipio` com apenas a primeira letra maiúscula.~~
+-   Sincronização via GitHub
+-   Aprender a gerar o mapa de precipitação mensal pra todo o RS
+    -   O RS está entre 2 fusos, então acaba "partindo no meio" a figura
+-   Talvez pensar numa integração via Google Sheets.
 
-GitHub: [https://github.com/leonardofwink/](https://github.com/leonardofwink/)
+# Informações adicionais {#sec-informações-adicionais .unnumbered}
 
-LinkedIn: [https://www.linkedin.com/in/leonardofwink/](https://www.linkedin.com/in/leonardofwink/)
+E-mail para contato: [leonardofwink\@gmail.com](leonardofwink@gmail.com)
+
+GitHub: <https://github.com/leonardofwink/>
+
+LinkedIn: <https://www.linkedin.com/in/leonardofwink/>
