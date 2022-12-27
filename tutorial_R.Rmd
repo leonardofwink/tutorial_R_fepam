@@ -1,7 +1,7 @@
 ---
 title: "Tutorial - como gerar os gráficos boxplot no R"
 author: "Leonardo Fernandes Wink"
-email: leonardofwink@gmail.com
+email: "leonardofwink@gmail.com"
 date: "`r format(Sys.time(), '%d/%m/%Y')`"
 output:
   html_document:
@@ -18,6 +18,7 @@ output:
     fig_height: 6.66
     fig_caption: yes
     code_download: true
+    code_folding: show
   pdf_document:
     toc: yes
   word_document: 
@@ -33,15 +34,15 @@ fig.align: center
 
 # Primeiro acesso {#sec-primeiro-acesso .unnumbered}
 
-1.  Se é o seu primeiro acesso, clique na caixinha `Code` no canto superior direito para baixar o código no formato `.Rmd`, ou seja, RMarkdown.
-
-2.  Abra o R
-
+1.  Se é o seu primeiro acesso, clique na caixinha `Code` no canto superior direito para baixar o código no formato `.Rmd`, ou seja, RMarkdown.\
+2.  Abra o R\
 3.  Clique em File -\> Open file -\> e selecione esse arquivo `.Rmd` que você baixou.
 
 Na primeira vez em que for rodar os códigos aqui no R, será solicitado que instale pacotes. Quando aparecerem caixas de diálogo, clique em **`Yes`**. Pode demorar um pouco esse processo. Para ter uma melhor visualização desse tutorial pressione as teclas `Ctrl+Shift+K` ou clique no botão `Knit` acima.
 
-Sempre que quiser renderizar o código novamente use esse comando, ou caso esteja com um gráfico aberto e queira voltar a ver em formato `.html`, clique em Viewer
+Sempre que quiser renderizar o código novamente use esse comando, ou caso esteja com um gráfico aberto e queira voltar a ver em formato `.html`, clique em Viewer na janela inferior direita.
+
+![](images/paste-197FCAFA.png)
 
 # Comandos mais utilizados {#sec-comandos-mais-utilizados}
 
@@ -78,11 +79,40 @@ Sempre que quiser renderizar o código novamente use esse comando, ou caso estej
 3.  Verificar o intervalo de dados da planilha. As últimas 10 linhas costumam ser dos sumários, mas o R não entende isso.
     -   verificar até qual linha a coluna `Índice` tem valores registrados, neste caso o `Índice` vai até 98 (+1 linha de cabeçalho) = linha 99
     -   Alterar na parte de importação o intervalo para compreender somente os dados (**alteracao_2**)
-    -   Estou tentando descobrir como economizar essa etapa. [^1]
-
-[^1]: [](#sec-ainda-precisa-ser-implementado)
+    -   Estou tentando descobrir como economizar essa etapa.
 
 # Pacotes necessários {#sec-pacotes-necessários .pacotes}
+
+```{r configurando exibir/ocultar código e resultados, include=FALSE}
+hooks = knitr::knit_hooks$get()
+
+hook_foldable = function(type) {
+  force(type)
+  function(x, options) {
+    res = hooks[[type]](x, options)
+    
+    if (isFALSE(options[[paste0("fold.", type)]])) return(res)
+    
+    paste0(
+      "<details><summary>", type, "</summary>\n\n",
+      res,
+      "\n\n</details>"
+    )
+  }
+}
+
+knitr::knit_hooks$set(
+  output = hook_foldable("output"),
+  plot = hook_foldable("plot")
+)
+
+# Disable folding
+
+# ```{r, fold.output=FALSE, fold.plot=FALSE}
+# rnorm(10)
+# plot(iris)
+# ```
+```
 
 ```{r Pacotes necessários, message = FALSE, warning = TRUE}
 pacman::p_load(readr, readxl, 
@@ -147,7 +177,7 @@ plan_litoral_medio <- read_excel(
 
 # Sumários estatísticos {#sec-sumários-estatísticos}
 
-```{r sumario}
+```{r sumario, echo = TRUE}
 sumario <- plan_litoral_medio %>%
   dplyr::select(cod_estacao, oxigenio_dissolvido, ano_coleta) %>%
   filter(ano_coleta > "2013" &
@@ -172,13 +202,15 @@ sumario <- plan_litoral_medio %>%
     max =
       max(oxigenio_dissolvido,
           na.rm = TRUE))
+
+sumario
 ```
 
 ## Visualização da estrutura de dados da planilha {#sec-visualização-da-estrutura-de-dados-da-planilha}
 
 Conferir se o tipo dos dados está correto, data em formato de data (date/dttm), código da estação como character (chr), valor medido dos parâmetros como double (dbl).
 
-```{r estrutura da planilha}
+```{r estrutura da planilha,}
 glimpse(plan_litoral_medio)
 # str(plan_litoral_medio) #outra maneira de visualizar a eSTRutura 
 ```
@@ -306,7 +338,7 @@ annotate("rect",
 
 ### Oxigênio Dissolvido {#sec-oxigênio-dissolvido}
 
-```{r Gráfico OD, fig.cap="Oxigênio Dissolvido", message=FALSE, warning=FALSE}
+```{r Gráfico OD, fig.cap="Oxigênio Dissolvido", message=FALSE, warning=FALSE, fold.plot=FALSE}
 (graf_od <- plan_litoral_medio %>%
     ggplot(
       aes(
@@ -396,7 +428,7 @@ annotate("rect",
 
 ### DBO {#sec-dbo}
 
-```{r Gráfico DBO, warning = FALSE, message = FALSE, fig.cap="Demanda Bioquímica de Oxigênio"}
+```{r Gráfico DBO, warning = FALSE, message = FALSE, fig.cap="Demanda Bioquímica de Oxigênio", fold.plot=FALSE}
 (graf_dbo <- ggplot(plan_litoral_medio,
                aes(x = cod_estacao,
                    y = dbo))+
@@ -473,7 +505,7 @@ annotate("rect",
 
 ### *Escherichia coli*
 
-```{r Gráfico Ecoli, warning = FALSE, message = FALSE, fig.cap="Escherichia-coli"}
+```{r Gráfico Ecoli, warning = FALSE, message = FALSE, fig.cap="Escherichia-coli", fold.plot=FALSE}
 (graf_ecoli <- plan_litoral_medio %>% 
    ggplot(aes(cod_estacao,
               e_coli))+
@@ -502,7 +534,7 @@ annotate("rect",
                 position = position_dodge(width = 0.65))+
    geom_boxplot(fill='#F8F8FF',
                 color="black",
-                outlier.shape = NA, #se deixar NA fica só o jitter, se não, deixa 1
+                outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
                 width= 0.7)+
    # facet_wrap(~periodo)+
    labs(title = "*Escherichia coli*",
@@ -555,7 +587,7 @@ annotate("rect",
 
 ### Fósforo Total {#sec-fósforo-total}
 
-```{r Gráfico fósforo total, warning = FALSE, message = FALSE, fig.cap="Fósforo total"}
+```{r Gráfico fósforo total, warning = FALSE, message = FALSE, fig.cap="Fósforo total", fold.plot=FALSE}
 (graf_ptot <- ggplot(plan_litoral_medio,
                      aes(cod_estacao,
                          fosforo_total))+
@@ -579,7 +611,7 @@ annotate("rect",
                 position = position_dodge(width = 0.65))+
    geom_boxplot(fill='#F8F8FF',
                 color="black",
-                outlier.shape = NA, #se deixar NA fica só o jitter, se não, deixa 1
+                outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
                 width= 0.7)+
    # facet_wrap(~periodo)+
    labs(title = "Fósforo total",
@@ -620,7 +652,7 @@ annotate("rect",
 
 ### Nitrogênio amoniacal {#sec-nitrogênio-amoniacal}
 
-```{r Gráfico Nitrogênio Amoniacal, warning = FALSE, message = FALSE, fig.cap="Nitrogênio Amoniacal"}
+```{r Gráfico Nitrogênio Amoniacal, warning = FALSE, message = FALSE, fig.cap="Nitrogênio Amoniacal", fold.plot=FALSE}
 (graf_namon <- ggplot(plan_litoral_medio,
                  aes(cod_estacao,
                      nitrogenio_amoniacal))+
@@ -686,7 +718,7 @@ annotate("rect",
 
 ### Turbidez {#sec-turbidez}
 
-```{r Gráfico Turbidez, fig.cap="turbidez", warning = FALSE, message = FALSE}
+```{r Gráfico Turbidez, fig.cap="turbidez", warning = FALSE, message = FALSE, fold.plot=FALSE}
 (graf_turb <- ggplot(plan_litoral_medio,
                    aes(cod_estacao,
                        turbidez))+
@@ -754,7 +786,7 @@ annotate("rect",
 
 ### pH {#sec-pH}
 
-```{r Gráfico pH, fig.cap="pH-gravataí no período 1990-2020", warning = FALSE, message = FALSE}
+```{r Gráfico pH, fig.cap="pH", warning = FALSE, message = FALSE, fold.plot=FALSE}
 (graf_pH <- ggplot(plan_litoral_medio,
                  aes(cod_estacao,
                      ph))+
@@ -823,7 +855,7 @@ annotate("rect",
 
 ### Sólidos Totais {#sec-sólidos-totais}
 
-```{r Gráfico SólTot, fig.cap="sólidos-totais", warning = FALSE, message = FALSE}
+```{r Gráfico SólTot, fig.cap="sólidos-totais", warning = FALSE, message = FALSE, fold.plot=FALSE}
 (graf_solidos_totais <- ggplot(plan_litoral_medio,
                                aes(cod_estacao,
                                    solidos_totais))+
@@ -881,10 +913,10 @@ annotate("rect",
 
 ### Condutividade {#sec-condutividade}
 
-```{r Gráfico cond_elet, fig.cap="condutividade-eletrica", warning = FALSE, message = FALSE}
+```{r Gráfico cond_elet, fig.cap="condutividade-eletrica", warning = FALSE, message = FALSE, fold.plot=FALSE}
 (graf_cond_elet <- ggplot(plan_litoral_medio,
-                        aes(cod_estacao,
-                            condutividade))+
+                          aes(cod_estacao,
+                              condutividade))+
    annotate("rect",
             xmin = -Inf, xmax = Inf,
             ymin = 500, ymax = Inf,
@@ -892,7 +924,7 @@ annotate("rect",
             fill = "#eb5661")+ #classe 4
    annotate("rect",
             xmin = -Inf, xmax = Inf,
-            ymin = -Inf, ymax = 500,
+            ymin = 0, ymax = 500,
             alpha = 1,
             fill = "#8dcdeb")+ #classe 1
    stat_boxplot(geom = 'errorbar',
@@ -903,17 +935,18 @@ annotate("rect",
                 outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
                 width= 0.7)+
    # facet_wrap(~periodo)+
-      labs(title = "Condutividade elétrica",
+   labs(title = "Condutividade elétrica",
         x="Estação",
         y="µmhos/cm")+
-   scale_y_continuous(expand = expansion(mult = c(0.01, 0.05)),
+   scale_y_continuous(expand = expansion(mult = c(0.05, 0.05)),
                       n.breaks = 8,
-                      limits = c(0,
+                      limits = c(min(plan_litoral_medio$condutividade, na.rm = TRUE),
                                  max(plan_litoral_medio$condutividade, na.rm = TRUE)),
+                      trans = "log10",
                       labels = scales::number_format(accuracy = 1,
                                                      decimal.mark = ",",
                                                      big.mark = " "))+
-    ggbeeswarm::geom_quasirandom(
+   ggbeeswarm::geom_quasirandom(
      size = 1.2,
      alpha = .25,
      width = .07,
@@ -933,7 +966,14 @@ annotate("rect",
                alpha=.5,
                na.rm = TRUE,
                size = 1)+
-   theme_grafs()
+   theme_grafs()+
+   theme(
+     axis.text.y = element_text(
+       angle = 90,
+       # size=15,
+       # face=2
+     )
+   )
 )
 ```
 
@@ -941,7 +981,7 @@ annotate("rect",
 
 Para gerar um gráfico ao longo do tempo pra cada uma das estações é necessário alterar o `ano_inicial` e o `ano_final`. Também é necessário selecionar qual parâmetro que se quer fazer a visualização.
 
-```{r gráfico ao longo do tempo, warning = FALSE, message = FALSE}
+```{r gráfico ao longo do tempo, warning = FALSE, message = FALSE, fold.plot=FALSE}
 ano_inicial <- 2015
 ano_final <- 2022
 
@@ -1003,7 +1043,7 @@ ano_final <- 2022
 
 ## Correlação {#sec-correlação}
 
-```{r Correlação, fig.cap="correlação-parametros-qualidade-agua", time_it = TRUE, warning=FALSE, message = FALSE,}
+```{r Correlação, fig.cap="correlação-parametros-qualidade-agua", time_it = TRUE, warning=FALSE, message = FALSE, fold.plot=FALSE}
 parametros_iqa_lit_medio <- plan_litoral_medio %>%
   dplyr::select(cod_estacao,
          ph,
@@ -1088,9 +1128,14 @@ correl_IQA_lit_medio <- parametros_iqa_lit_medio %>%
 ## Salvar os gráficos {#sec-salvar-os-gráficos}
 
 Replicar esse modelo pros gráficos que deseja salvar.\
-1. Criar novo code chunk (`Ctrl+Alt+I`) 2. Copiar a fórmula abaixo 3. Colar nesse novo code chunk 4. Os gráficos ficarão salvos em uma pasta que irá ser criada a partir do código.
+1. Criar novo code chunk (`Ctrl+Alt+I`)\
+2. Copiar a fórmula abaixo\
+3. Colar nesse novo code chunk\
+4.
 
-```{r salvar-graficos}
+Os gráficos ficarão salvos em uma pasta que irá ser criada a partir do código.
+
+```{r salvar-graficos, message = FALSE, warning = FALSE}
 ggsave("graf_od.png",
        plot = graf_od, #alteracao
        path = "./graficos",
@@ -1116,32 +1161,27 @@ pacman::p_load(raster, leaflet, sf
 ## Mapa estático {#sec-mapa-estático}
 
 Importando as informações necessárias pra gerar mapas de precipitação.\
-Fonte: GADM [^2], [^3]
+Fonte: GADM [^1], [^2]
 
-[^2]: <https://gadm.org/maps/BRA.html>
+[^1]: <https://gadm.org/maps/BRA.html>
 
-[^3]: <https://gadm.org/data.html>
+[^2]: <https://gadm.org/data.html>
 
 ```{r mapa-estatico, fig.cap = "Mapa estático do RS"}
 Brasil <- getData(
-  'GADM', 
+  'GADM',
   country = 'Brazil',
-  level = 2
+  level = 3
 ) %>%
-  st_as_sf() 
+  st_as_sf()
 
-RS <- subset(Brasil, NAME_1 == "Rio Grande do Sul") 
+RS <- subset(Brasil,
+             NAME_1 == "Rio Grande do Sul")
 
-lbl <- data.frame(month_abb = month.abb, mes = 1:12)
+lbl <- data.frame(month_abb = month.abb,
+                  mes = 1:12)
 
-RS_xy <- cbind(
-  RS, st_coordinates(
-    st_centroid(RS$geometry
-    )
-  )
-)
-            
-plan_litoral_medio %>% 
+plan_litoral_medio %>%
   ggplot(
     # aes(x = longtitude,
     #     y = latitude,
@@ -1180,127 +1220,123 @@ leaflet(RS) %>%
 
 ## Mapa de precipitação anual
 
-```{r Extraindo os dados raster de precipitação, message = FALSE, warning = FALSE, include = FALSE}
-st_centroid(RS)
-
-Prec <- getData(
-  "worldclim", 
-  var = "prec", 
-  res = 0.5, 
-  lat = -27.08058, #procurar lat long no google e alterar aqui
-  lon = -51.217699 
-)
-Prec_RS    <- crop(Prec, RS)
-Prec_RS    <- Prec_RS <- mask(Prec_RS, RS)
-PPAnual_RS <- do.call("sum", 
-                       unstack(Prec_RS))
-plot(PPAnual_RS)
+```{r Extraindo os dados raster de precipitação, message = FALSE, warning = FALSE}
+# st_centroid(RS)
+# 
+# Prec <- getData(
+#   "worldclim", 
+#   var = "prec", 
+#   res = 0.5, 
+#   lat = c(-30.033056, -29.68417), #procurar lat long no google e alterar aqui
+#   lon = c(-51.230000, -53.80694)
+# )
+# 
+# Prec_RS <- Prec %>% 
+#   crop(RS) %>% 
+#   mask(RS, na.rm = TRUE)
+# 
+# plot(Prec_RS)
+# 
+# PPAnual_RS <- do.call("sum", 
+#                        unstack(Prec_RS))
+# plot(PPAnual_RS)
 ```
 
-```{r Elaborando os meses de precipitação, message = FALSE, warning = FALSE, include = FALSE}
-vls <- rasterToPoints(Prec_RS) %>% 
-  as_tibble() %>% 
-  gather(var, value, -x, -y) %>% 
-  mutate(mes = parse_number(var)) %>% 
-  inner_join(., lbl, by = 'mes') %>% 
-  dplyr::select(x, y, month_abb, value) %>% 
-  mutate(month_abb = factor(month_abb, levels = month.abb))
-
-vls %>% 
-  filter(month_abb == 'Jan')
-summary(vls$value) #descobre o valor mínimo, médio e máximo de precipitação
-
+```{r Elaborando os meses de precipitação, message = FALSE, warning = FALSE}
+# vls <- rasterToPoints(Prec_RS) %>% 
+#   as_tibble() %>% 
+#   gather(var, value, -x, -y) %>% 
+#   mutate(mes = parse_number(var)) %>% 
+#   inner_join(., lbl, by = 'mes') %>% 
+#   dplyr::select(x, y, month_abb, value) %>% 
+#   mutate(month_abb = factor(month_abb, levels = month.abb))
+# 
+# vls %>% 
+#   filter(month_abb == 'Jan')
+# 
+# summary(vls$value) #descobre o valor mínimo, médio e máximo de precipitação
 ```
 
 ## Mapa com precipitação mensal
 
-Caso queira gerar um mapa com a precipitação mensal, alternar o include para `TRUE`. A geração desse mapa demanda bastante processamento, recomendável manter como `FALSE`.
+Caso queira gerar um mapa com a precipitação mensal, alternar o include para `TRUE`. A geração desse mapa demanda bastante processamento, recomendável manter `include = FALSE` e `echo = FALSE`.
 
-```{r mapas-precipitacao-mensal, include = FALSE}
-cores1<- c('#ff4223','#f19e21','#ffee21','#00ffff', '#10aebe', '#165dff','#9331dc')
-cores2<- c('#9331dc', '#165dff', '#10aebe', '#00ffff', '#ffee21', '#f19e21', '#ff4223')
-
-(gg <- ggplot(vls)  +
-    geom_tile(aes(x = x, 
-                  y =  y, 
-                  fill = value)) +
-    scale_fill_gradientn(colours = cores1, 
-                         na.value = 'white', 
-                         limits = c(0, 250), 
-                         breaks = seq(0, 250, 25)) +
-    geom_sf(data = RS, 
-            fill = NA, 
-            color = 'black', 
-            size = 0.2)+
-    # geom_sf_text(data = RS_xy,
-    #              aes(x = X,
-    #                  y = Y,
-    #                  label = NAME_1
-    #                  ),
-    #              size = 0.5,
-    #              color="black",
-    #              # fontfamily = "serif",
-    #              # fontface="italic"
-    # )+
-    facet_wrap(~ month_abb) +
-    # scale_x_continuous(breaks = c(-72.5, -71.0, -69.5)) +
-    ggtitle("Precipitação mensal - RS")+
-    labs(title = 'Precipitação Mensal - RS',
-         fill = 'mm',  
-         x = 'Longitude', 
-         y = 'Latitude', 
-         caption = "Leonardo Fernandes Wink") +
-    labs(
-      caption = "Fonte: https://osmdata.openstreetmap.de/"
-    )+
-    theme_bw() +
-    theme(
-      plot.background = element_rect(fill = "white"),
-      panel.grid.major = element_blank(),
-      panel.grid.minor = element_blank(),
-      legend.key.width = unit(5, 'line'),
-      legend.position = 'bottom',
-      panel.border = element_rect(size = 2, 
-                                  color="white"),
-      plot.title = element_text(
-        size = 16, 
-        hjust = 0.5, 
-        color = "black", 
-        face = "bold"
-      ),
-      axis.text.x = element_text(
-        face="bold", 
-        color="black", 
-        size=8
-      ),
-      axis.text.y = element_text(
-        angle = 90,
-        face="bold", 
-        color="black", 
-        size=8
-      ),
-      strip.text = element_text(
-        face= 'bold', 
-        size= 14, 
-        hjust= 0.5, 
-        color= 'black'
-      ),
-      strip.background = element_rect(fill='white'),
-      plot.subtitle = element_text(
-        size = 11, 
-        hjust = 0.8, 
-        face = "italic", 
-        color = "red", #"#4e4d47"
-        family="serif"
-      ),
-      plot.caption = element_text(
-        size = 10, 
-        hjust = 0.95, 
-        color = "black",
-      )
-    ) +
-    guides(shape = guide_legend(override.aes = list(size = 10)))
-)
+```{r mapas-precipitacao-mensal, include = TRUE, echo = FALSE}
+# cores1<- c('#ff4223','#f19e21','#ffee21','#00ffff', '#10aebe', '#165dff','#9331dc')
+# cores2<- c('#9331dc', '#165dff', '#10aebe', '#00ffff', '#ffee21', '#f19e21', '#ff4223')
+# 
+# 
+# (gg <- ggplot(vls)  +
+#     geom_tile(aes(x = x, 
+#                   y = y, 
+#                   fill = value)) +
+#     scale_fill_gradientn(colours = cores1, 
+#                          na.value = 'white', 
+#                          limits = c(0, 250), 
+#                          breaks = seq(0, 250, 25)) +
+#     geom_sf(data = RS, 
+#             fill = NA, 
+#             color = 'black', 
+#             size = 0.2)+
+#     facet_wrap(~ month_abb) +
+#     # scale_x_continuous(breaks = c(-72.5, -71.0, -69.5)) +
+#     ggtitle("Precipitação mensal - RS")+
+#     labs(title = 'Precipitação Mensal - RS',
+#          fill = 'mm',  
+#          x = 'Longitude', 
+#          y = 'Latitude', 
+#          caption = "Leonardo Fernandes Wink") +
+#     labs(
+#       caption = "Fonte: https://osmdata.openstreetmap.de/"
+#     )+
+#     theme_bw() +
+#     theme(
+#       plot.background = element_rect(fill = "white"),
+#       panel.grid.major = element_blank(),
+#       panel.grid.minor = element_blank(),
+#       panel.border = element_rect(size = 2, 
+#                                   color="white"),
+#       legend.key.width = unit(5, 'line'),
+#       legend.position = 'bottom',
+#       plot.title = element_text(
+#         size = 16, 
+#         hjust = 0.5, 
+#         color = "black", 
+#         face = "bold"
+#       ),
+#       axis.text.x = element_text(
+#         face = "bold", 
+#         color = "black", 
+#         size = 8
+#       ),
+#       axis.text.y = element_text(
+#         angle = 90,
+#         face = "bold", 
+#         color = "black", 
+#         size = 8
+#       ),
+#       strip.text = element_text(
+#         face= 'bold', 
+#         size= 14, 
+#         hjust= 0.5, 
+#         color= 'black'
+#       ),
+#       strip.background = element_rect(fill='white'),
+#       plot.subtitle = element_text(
+#         size = 11, 
+#         hjust = 0.8, 
+#         face = "italic", 
+#         color = "red", #"#4e4d47"
+#         family="serif"
+#       ),
+#       plot.caption = element_text(
+#         size = 10, 
+#         hjust = 0.95, 
+#         color = "black",
+#       )
+#     ) +
+#     guides(shape = guide_legend(override.aes = list(size = 10)))
+# )
 ```
 
 # Links úteis {#sec-links-úteis}
@@ -1351,3 +1387,12 @@ E-mail para contato: [leonardofwink\@gmail.com](leonardofwink@gmail.com)
 GitHub: <https://github.com/leonardofwink/>
 
 LinkedIn: <https://www.linkedin.com/in/leonardofwink/>
+
+```{r, include = FALSE}
+# no YAML do code chunk:
+# pra esconder o código
+
+# class.source = 'fold-hide' 
+# fold.output=FALSE, 
+# fold.plot=FALSE
+```
