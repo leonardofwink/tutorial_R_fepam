@@ -35,12 +35,21 @@ fig.align: center
 # Primeiro acesso {#sec-primeiro-acesso .unnumbered}
 
 1.  Se é o seu primeiro acesso, clique na caixinha `Code` no canto superior direito para baixar o código no formato `.Rmd`, ou seja, RMarkdown.\
-2.  Abra o R\
+2.  Abra o RStudio\
 3.  Clique em File -\> Open file -\> e selecione esse arquivo `.Rmd` que você baixou.
+4.  Você deve chegar a uma tela semelhante a da figura abaixo
 
-Na primeira vez em que for rodar os códigos aqui no R, será solicitado que instale pacotes. Quando aparecerem caixas de diálogo, clique em **`Yes`**. Pode demorar um pouco esse processo. Para ter uma melhor visualização desse tutorial pressione as teclas `Ctrl+Shift+K` ou clique no botão `Knit` acima.
+![](images/20221227-040726-003.png)
 
-Sempre que quiser renderizar o código novamente use esse comando, ou caso esteja com um gráfico aberto e queira voltar a ver em formato `.html`, clique em Viewer na janela inferior direita.
+Na primeira vez em que for rodar os códigos aqui no R, será solicitado que instale pacotes. Quando aparecerem caixas de diálogo, clique em **`Yes`**. Pode demorar um pouco esse processo. Para ter uma melhor visualização desse tutorial pressione as teclas `Ctrl+Shift+K` ou clique no botão `Knit` acima. Recomendo manter uma aba do navegador com o arquivo `tutorial_R.html` aberto.
+
+Já podemos rodar o código pela primeira vez!\
+Para isso, aperte `Ctrl+Alt+R` ou clique em `Run` no menu superior e depois em `Run All`:\
+![](images/20221227-035543-001.png)
+
+Enquanto os pacotes estão sendo instalados, prossiga com a leitura.
+
+Quando quiser renderizar o código para ter a mesma visualização como a do formato `.html` use o comando de `Knit`, o `Ctrl+Shift+K`, ou caso esteja com um gráfico aberto, clique em Viewer na janela inferior direita.
 
 ![](images/paste-197FCAFA.png)
 
@@ -48,7 +57,7 @@ Sempre que quiser renderizar o código novamente use esse comando, ou caso estej
 
 `Ctrl+Alt+R` -\> executa TODOS os códigos de uma vez só.
 
-`Ctrl+Shift+K` -\> roda TODOS os códigos de uma vez só e renderiza a visualização em formatos `.html` ou `.pdf`.
+`Knit` ou `Ctrl+Shift+K` -\> roda TODOS os códigos de uma vez só e renderiza a visualização em formatos `.html` ou `.pdf`.
 
 `Ctrl+Enter` -\> executa um "parágrafo" de códigos.
 
@@ -66,17 +75,19 @@ Sempre que quiser renderizar o código novamente use esse comando, ou caso estej
 
 # Passo-a-passo {#sec-passo-a-passo}
 
-> **Importante**: vou deixar comentado os pedaços de código que necessitam de alteração obrigatória com a nomenclatura `alteracao_` seguido de um número.
+> **Importante**: Com esse arquivo `.Rmd` você deve chegar aos mesmos resultados que presentes no arquivo `tutorial_R.html`.
+>
+> Vou deixar comentado os pedaços de código que necessitam de alteração obrigatória com a nomenclatura `alteracao_` seguido de um número.
 >
 > Para encontrar facilmente os locais que precisam ser ajustados, basta utilizar o comando `Ctrl+F` e procurar por `alteracao_` e o respectivo número listado abaixo.
 
 1.  Renomear a planilha a ser importada pra facilitar a leitura.
     -   nesse caso renomeei a plan gerada pelo RSÁgua de `Dados_20221222143305.xls` para `plan_litoral_medio.xls`.
     -   você pode usar `Ctrl+F` e substituir todas as ocorrências de `plan_litoral_medio` para o nome que você deu à planilha.
-3.  Ajustar o caminho do arquivo. (**alteracao_1**)
+2.  Ajustar o caminho do arquivo. (**alteracao_1**)
     -   nesse exemplo estou importando diretamente da pasta de downloads do meu computador: `"C:/Users/Léo/Downloads/plan_litoral_medio.xls"`
     -   Futuramente quero implementar a integração com o [Google Sheets](#sec-ainda-precisa-ser-implementado).
-4.  Verificar o intervalo de dados da planilha. As últimas 10 linhas costumam ser dos sumários, mas o R não entende isso.  
+3.  Verificar o intervalo de dados da planilha. As últimas 10 linhas costumam ser dos sumários, mas o R não entende isso.
     -   verificar até qual linha a coluna `Índice` tem valores registrados, neste caso o `Índice` vai até 98 (+1 linha de cabeçalho) = linha 99
     -   Alterar na parte de importação o intervalo para compreender somente os dados (**alteracao_2**)
     -   Estou tentando descobrir como economizar essa etapa.
@@ -130,50 +141,94 @@ pacman::p_load(readr, readxl,
 
 # Importação dos dados {#sec-importação-dos-dados}
 
-```{r replicando importação dos dados}
-# plan_litoral_medio <- read_excel(
-#   "https://github.com/leonardofwink/tutorial_R_fepam/blob/main/planilha_rsagua/plan_litoral_medio.xls?raw=true", #alteracao_1
-#   sheet = "Dados_Ajustados", 
-#   col_types = c(
-#     "numeric", "text", "numeric", "numeric", "text", 
-#     "text", "text", "text", "text", "date", 
-#     "date", "text", "numeric", "numeric", 
-#     "numeric", "numeric", "numeric", 
-#     "numeric", "numeric", "numeric", 
-#     "numeric", "numeric", "numeric", 
-#     "numeric", "numeric", "numeric", 
-#     "numeric", "numeric", "numeric", 
-#     "numeric", "numeric", "numeric", 
-#     "numeric", "numeric", "numeric", 
-#     "numeric", "numeric", "numeric", 
-#     "numeric", "numeric", "numeric", 
-#     "numeric", "numeric", "numeric", 
-#     "numeric", "numeric", "numeric", 
-#     "numeric", "numeric", "numeric", 
-#     "numeric"),
-#   range = "A1:AY99", #alteracao_2
-#   trim_ws = TRUE
-# ) %>% 
-#   janitor::clean_names() %>% 
-#   rename(
-#     e_coli = escherichia_coli,
-#     dbo = demanda_bioquimica_de_oxigenio,
-#     mercurio = mercurio_em_micrograma_por_litro_ug_l
-#   ) %>% 
-#   mutate(
-#     municipio = str_to_title(municipio),
-#     data_coleta = ymd(data_coleta),
-#     ano_coleta = year(data_coleta),
-#   ) %>%
-#   dplyr::select( #reordenando as colunas
-#     c(1:10),
-#     ano_coleta,
-#     everything()
-#   )
+```{r replicando importação dos dados, warning=FALSE, message=FALSE}
+plan_litoral_medio <- read_delim(
+  "https://raw.githubusercontent.com/leonardofwink/tutorial_R_fepam/main/planilha_rsagua/plan_litoral_medio%20-%20Dados_Ajustados.tsv", 
+  delim = "\t", 
+  escape_double = FALSE,
+  col_types = cols(
+    ÍNDICE = col_number(),
+    `CÓD. ESTAÇÃO` = col_character(),
+    LATITUDE = col_number(),
+    LONGITUDE = col_number(),
+    `BACIA HIDROGRÁFICA` = col_character(),
+    `RECURSO HÍDRICO` = col_character(),
+    REGIÃO = col_character(),
+    MUNICÍPIO = col_character(),
+    AMBIENTE = col_character(),
+    `DATA COLETA` = col_date(format = "%m/%d/%Y"),
+    `HORA COLETA` = col_time(format = "%H:%M:%S"),
+    `CHUVA 24H` = col_character(),
+    ALCALINIDADE = col_number(),
+    ALUMÍNIO = col_number(),
+    CÁDMIO = col_number(),
+    CHUMBO = col_number(),
+    CLORETO = col_number(),
+    `CLOROFILA A` = col_number(),
+    COBRE = col_number(),
+    `COLIFORMES TERMOTOLERANTES` = col_number(),
+    `COLIFORMES TOTAIS` = col_number(),
+    CONDUTIVIDADE = col_number(),
+    `CROMO TOTAL` = col_number(),
+    `DEMANDA BIOQUÍMICA DE OXIGÊNIO` = col_number(),
+    `DEMANDA QUÍMICA DE OXIGÊNIO` = col_number(),
+    `ESCHERICHIA COLI` = col_number(),
+    FERRO = col_number(),
+    `FITOPLANCTON  - CIANOBACTÉRIAS` = col_number(),
+    `FOSFATO ORTO` = col_number(),
+    `FÓSFORO TOTAL` = col_number(),
+    MANGANÊS = col_number(),
+    `MERCÚRIO EM MICROGRAMA POR LITRO (UG/L)` = col_number(),
+    NÍQUEL = col_number(),
+    NITRATO = col_number(),
+    `NITROGÊNIO AMONIACAL` = col_number(),
+    `NITROGÊNIO ORGÂNICO` = col_number(),
+    `NITROGÊNIO TOTAL KJELDAHL` = col_number(),
+    `OXIGÊNIO DISSOLVIDO` = col_number(),
+    PH = col_number(),
+    `PROFUNDIDADE COLETA` = col_number(),
+    `PROFUNDIDADE TOTAL` = col_number(),
+    SALINIDADE = col_number(),
+    `SÓLIDOS DISSOLVIDOS TOTAIS` = col_number(),
+    `SÓLIDOS SUSPENSOS TOTAIS` = col_number(),
+    `SÓLIDOS TOTAIS` = col_number(),
+    `TEMPERATURA DA ÁGUA` = col_number(),
+    `TEMPERATURA DO AR` = col_number(),
+    `TRANSPARÊNCIA DA ÁGUA` = col_number(),
+    TURBIDEZ = col_number(),
+    `VAZÃO RECURSO HÍDRICO` = col_number(),
+    ZINCO = col_number()
+  ),
+  locale = locale(
+    date_names = "pt", 
+    decimal_mark = ",",
+    grouping_mark = ""
+  ),
+  trim_ws = TRUE
+) %>%
+  janitor::clean_names() %>%
+  slice(
+    1:(n() - 8) #retirando as ultimas 8 linhas
+  ) %>% 
+  rename(
+    e_coli = escherichia_coli,
+    dbo = demanda_bioquimica_de_oxigenio,
+    mercurio = mercurio_em_micrograma_por_litro_ug_l
+  ) %>%
+  mutate(
+    municipio = str_to_title(municipio),
+    data_coleta = ymd(data_coleta),
+    ano_coleta = year(data_coleta),
+  ) %>%
+  dplyr::select( #reordenando as colunas
+    c(1:10),
+    ano_coleta,
+    everything()
+  )
 ```
 
 ```{r Importando os dados}
-plan_litoral_medio <- read_excel(
+plan_litoral_medio_alterar <- read_excel(
   "C:/Users/Léo/Downloads/plan_litoral_medio.xls", #alteracao_1
   sheet = "Dados_Ajustados", 
   col_types = c(
@@ -206,6 +261,7 @@ plan_litoral_medio <- read_excel(
     municipio = str_to_title(municipio),
     data_coleta = ymd(data_coleta),
     ano_coleta = year(data_coleta),
+    # hora_coleta = parse_datetime(hora_coleta),
   ) %>%
   dplyr::select( #reordenando as colunas
     c(1:10),
@@ -1410,14 +1466,18 @@ Caso queira gerar um mapa com a precipitação mensal, alternar o include para `
 
 [Ambiental Pro Dev](https://www.youtube.com/@ambientalprodev5379)
 
-# Ainda precisa ser implementado {#sec-ainda-precisa-ser-implementado .unnumbered}
+# Ainda precisa ser implementado/ajustado {#sec-ainda-precisa-ser-implementadoajustado .unnumbered}
 
+-   RSÁgua deve buscar dados anteriores a 2015.
+-   A Fepam tem os dados de `altitude` das estações. A partir disso pode ser calculado o `% de saturação de Oxigênio Dissolvido`, necessário para o cálculo do IQA.
 -   Tornar a coluna de `chuva_24h` como factor.
+-   A coluna `hora_coleta` está com formato incorreto.
+-   Gerar um `Shiny Web App`
 -   ~~Tornar a coluna de `municipio` com apenas a primeira letra maiúscula.~~
 -   Sincronização via GitHub
 -   Aprender a gerar o mapa de precipitação mensal pra todo o RS
     -   O RS está entre 2 fusos, então acaba "partindo no meio" a figura
--   Talvez pensar numa integração via Google Sheets.
+-   Futuramente: integração via Google Sheets.
 
 # Informações adicionais {#sec-informações-adicionais .unnumbered}
 
@@ -1427,7 +1487,7 @@ GitHub: <https://github.com/leonardofwink/>
 
 LinkedIn: <https://www.linkedin.com/in/leonardofwink/>
 
-```{r, include = FALSE}
+```{r include = FALSE}
 # no YAML do code chunk:
 # pra esconder o código
 
