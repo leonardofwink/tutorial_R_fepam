@@ -72,11 +72,11 @@ Sempre que quiser renderizar o código novamente use esse comando, ou caso estej
 
 1.  Renomear a planilha a ser importada pra facilitar a leitura.
     -   nesse caso renomeei a plan gerada pelo RSÁgua de `Dados_20221222143305.xls` para `plan_litoral_medio.xls`.
-    -   você pode usar `Ctrl+F` e substituir todas as ocorrências de `plan_litoral_medio` para o nome que você deu à planilha.\
-2.  Ajustar o caminho do arquivo. (**alteracao_1**)
+    -   você pode usar `Ctrl+F` e substituir todas as ocorrências de `plan_litoral_medio` para o nome que você deu à planilha.
+3.  Ajustar o caminho do arquivo. (**alteracao_1**)
     -   nesse exemplo estou importando diretamente da pasta de downloads do meu computador: `"C:/Users/Léo/Downloads/plan_litoral_medio.xls"`
     -   Futuramente quero implementar a integração com o [Google Sheets](#sec-ainda-precisa-ser-implementado).
-3.  Verificar o intervalo de dados da planilha. As últimas 10 linhas costumam ser dos sumários, mas o R não entende isso.
+4.  Verificar o intervalo de dados da planilha. As últimas 10 linhas costumam ser dos sumários, mas o R não entende isso.  
     -   verificar até qual linha a coluna `Índice` tem valores registrados, neste caso o `Índice` vai até 98 (+1 linha de cabeçalho) = linha 99
     -   Alterar na parte de importação o intervalo para compreender somente os dados (**alteracao_2**)
     -   Estou tentando descobrir como economizar essa etapa.
@@ -117,11 +117,8 @@ knitr::knit_hooks$set(
 ```{r Pacotes necessários, message = FALSE, warning = TRUE}
 pacman::p_load(readr, readxl, 
                rmarkdown, 
-               # pillar, 
                dplyr, tidyverse, glue,
-               # gapminder, 
                knitr, kableExtra,
-               # gridExtra, gtsummary, 
                ggplot2,
                ggbeeswarm, GGally, 
                lubridate,
@@ -132,6 +129,48 @@ pacman::p_load(readr, readxl,
 ```
 
 # Importação dos dados {#sec-importação-dos-dados}
+
+```{r replicando importação dos dados}
+# plan_litoral_medio <- read_excel(
+#   "https://github.com/leonardofwink/tutorial_R_fepam/blob/main/planilha_rsagua/plan_litoral_medio.xls?raw=true", #alteracao_1
+#   sheet = "Dados_Ajustados", 
+#   col_types = c(
+#     "numeric", "text", "numeric", "numeric", "text", 
+#     "text", "text", "text", "text", "date", 
+#     "date", "text", "numeric", "numeric", 
+#     "numeric", "numeric", "numeric", 
+#     "numeric", "numeric", "numeric", 
+#     "numeric", "numeric", "numeric", 
+#     "numeric", "numeric", "numeric", 
+#     "numeric", "numeric", "numeric", 
+#     "numeric", "numeric", "numeric", 
+#     "numeric", "numeric", "numeric", 
+#     "numeric", "numeric", "numeric", 
+#     "numeric", "numeric", "numeric", 
+#     "numeric", "numeric", "numeric", 
+#     "numeric", "numeric", "numeric", 
+#     "numeric", "numeric", "numeric", 
+#     "numeric"),
+#   range = "A1:AY99", #alteracao_2
+#   trim_ws = TRUE
+# ) %>% 
+#   janitor::clean_names() %>% 
+#   rename(
+#     e_coli = escherichia_coli,
+#     dbo = demanda_bioquimica_de_oxigenio,
+#     mercurio = mercurio_em_micrograma_por_litro_ug_l
+#   ) %>% 
+#   mutate(
+#     municipio = str_to_title(municipio),
+#     data_coleta = ymd(data_coleta),
+#     ano_coleta = year(data_coleta),
+#   ) %>%
+#   dplyr::select( #reordenando as colunas
+#     c(1:10),
+#     ano_coleta,
+#     everything()
+#   )
+```
 
 ```{r Importando os dados}
 plan_litoral_medio <- read_excel(
