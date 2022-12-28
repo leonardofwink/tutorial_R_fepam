@@ -1,5 +1,5 @@
 ---
-title: "Tutorial - como gerar os gráficos boxplot no R"
+title: "Tutorial - como gerar os gráficos boxplot no R a partir do RSÁgua - Fepam"
 author: "Leonardo Fernandes Wink"
 email: "leonardofwink@gmail.com"
 date: "`r format(Sys.time(), '%d/%m/%Y')`"
@@ -19,11 +19,11 @@ output:
     fig_caption: yes
     code_download: true
     code_folding: show
-  pdf_document:
-    toc: yes
   word_document: 
     toc: yes
     keep_md: yes
+  pdf_document:
+    toc: yes
   github_document:
     html_preview: true
 always_allow_html: yes
@@ -34,20 +34,29 @@ fig.align: center
 
 # Primeiro acesso {#sec-primeiro-acesso .unnumbered}
 
-1.  Se é o seu primeiro acesso, clique na caixinha `Code` no canto superior direito para baixar o código no formato `.Rmd`, ou seja, RMarkdown.\
-2.  Abra o RStudio\
+Olá! Nesse tutorial você irá aprender a replicar tudo que será exibido nessa página!\
+
+Para isso, você precisa ter instalado em seu computador 2 programas: o `R` e o `RStudio`.\
+O R é a linguagem de programação e o RStudio a interface gráfica,
+
+Você pode baixar o `R` e o `RStudio` através do link <https://posit.co/download/rstudio-desktop/>\
+
+1.  Se é o seu primeiro acesso, clique na caixinha `Code` no canto superior direito para baixar o código no formato `.Rmd`, ou seja, RMarkdown.
+2.  Abra o RStudio
 3.  Clique em File -\> Open file -\> e selecione esse arquivo `.Rmd` que você baixou.
 4.  Você deve chegar a uma tela semelhante a da figura abaixo
 
 ![](images/20221227-040726-003.png)
 
-Na primeira vez em que for rodar os códigos aqui no R, será solicitado que instale pacotes. Quando aparecerem caixas de diálogo, clique em **`Yes`**. Pode demorar um pouco esse processo. Para ter uma melhor visualização desse tutorial pressione as teclas `Ctrl+Shift+K` ou clique no botão `Knit` acima. Recomendo manter uma aba do navegador com o arquivo `tutorial_R.html` aberto.
+Na primeira vez em que for rodar os códigos aqui no R, será solicitado que instale pacotes. Quando aparecerem caixas de diálogo, clique em **`Yes`**.
+
+Pode demorar um pouco esse processo. Para ter uma melhor visualização desse tutorial pressione as teclas `Ctrl+Shift+K` ou clique no botão `Knit` acima. Recomendo manter uma aba do navegador com o arquivo `tutorial_R.html` aberto.
 
 Já podemos rodar o código pela primeira vez!\
 Para isso, aperte `Ctrl+Alt+R` ou clique em `Run` no menu superior e depois em `Run All`:\
 ![](images/20221227-035543-001.png)
 
-Enquanto os pacotes estão sendo instalados, prossiga com a leitura.
+Enquanto os pacotes estão sendo instalados, prossiga com a leitura. Deixei alguns conteúdos nas [Referências](#sec-links-úteis) que irão complementar esse documento.
 
 Quando quiser renderizar o código para ter a mesma visualização como a do formato `.html` use o comando de `Knit`, o `Ctrl+Shift+K`, ou caso esteja com um gráfico aberto, clique em Viewer na janela inferior direita.
 
@@ -125,19 +134,33 @@ knitr::knit_hooks$set(
 # ```
 ```
 
+No `code chunk` abaixo serão instalados todos os pacotes necessários. Cada pacote contém funções específicas que auxiliam no desenvolvimento da atividade, seja a importação do dado (`readr`, `readxl`), na manipulação dos dados (limpeza/tratamento com `janitor` e `lubridate`), na visualização (`ggplot2`, `rmarkdown`, `kableExtra`) ou pra praticamente tudo (`tidyverse`).
+
 ```{r Pacotes necessários, message = FALSE, warning = TRUE}
-pacman::p_load(readr, readxl, 
-               rmarkdown, 
-               dplyr, tidyverse, glue,
-               knitr, kableExtra,
-               ggplot2,
-               ggbeeswarm, GGally, 
-               lubridate,
-               ggtext,
-               bookdown
-               #googlesheets4
-               )
+pacman::p_load(
+  # ETL (extract, transform, load)
+  janitor, readr, readxl, lubridate,
+  dplyr, 
+  tidyverse, 
+  glue,
+  # Visualização
+  ggplot2,
+  GGally, 
+  rmarkdown, 
+  knitr,
+  kableExtra,
+  ggbeeswarm, 
+  ggtext
+  # bookdown
+)
+#googlesheets4
 ```
+
+Para acessar a página de ajuda dos pacotes ou das funções, basta usar um `?` antes do que se está buscando.  
+
+No exemplo abaixo estou verificando os argumentos da função `p_load`, do pacote `pacman`. Na sequência abro o menu de ajuda do pacote `tidyverse`, um dos mais importantes da comunidade R. Outra maneira possível seria utilizando `help(package = 'pacman')`.
+
+![?help](images/20221227-162335-002.png)
 
 # Importação dos dados {#sec-importação-dos-dados}
 
@@ -380,19 +403,25 @@ f <- function(x) {
 >
 > Conferir a ordem das estações através do [mapa interativo](#sec-mapa-interativo-com-localização-dos-pontos-de-monitoramento).
 >
-> Para reordenar as estações, fazer como descrito no code chunk abaixo:
+> Elas acabam ficando fora de ordem por conta do código de ottobacias Para reordenar as estações, atente-se à função `scale_x_discrete` descrito no code chunk abaixo:
 
 ```{r reordenar estações no gráfico, eval = FALSE}
-scale_x_discrete(limits = c("87398500",
-                            "87398980",
-                            "87398900",
-                            "87398950",
-                            "87405500",
-                            "87406900",
-                            "87409900"),
-                 labels = c("PM1", "PM2", "PM3", "PM4", "PM5", "PM6", "PM7")
+scale_x_discrete(
+  limits = c(
+    "87332500",
+    "87420130",
+    "87420150",
+    "87420350",
+    "87420500",
+    "87510010"
+  ),
+  labels = c(
+    "PM1", "PM2", "PM3", "PM4", "PM5", "PM6"
+  )
 )+
 ```
+
+Obs: Para a Bacia Hidrográfica do Rio Gravataí é necessário
 
 > Sempre tomar cuidado com os limites do **eixo y**. Deixei como padrão o R buscar automaticamente qual o valor mínimo e máximo daquele parâmetro, mas o ideal é que se ajuste caso a caso.
 
@@ -435,89 +464,92 @@ annotate("rect",
 
 ```{r Gráfico OD, fig.cap="Oxigênio Dissolvido", message=FALSE, warning=FALSE, fold.plot=FALSE}
 (graf_od <- plan_litoral_medio %>%
-    ggplot(
-      aes(
-        x = cod_estacao,
-        y = oxigenio_dissolvido,
-        )
-    )+
-    annotate("rect",
-             xmin = -Inf, xmax = Inf,
-             ymin = -Inf, ymax = 2,
-             alpha = 1,
-             fill = "#ac5079")+ #>pior classe
-    annotate("rect",
-             xmin = -Inf, xmax = Inf,
-             ymin = 2, ymax = 4,
-             alpha = 1,
-             fill = "#eb5661")+ #classe 4
-    annotate("rect",
-             xmin = -Inf, xmax = Inf,
-             ymin = 4, ymax = 5,
-             alpha = 1,
-             fill = "#fcf7ab")+ #classe 3
-    annotate("rect",
-             xmin = -Inf, xmax = Inf,
-             ymin = 5, ymax = 6,
-             alpha = 1,
-             fill = "#70c18c")+ #classe 2
-    annotate("rect",
-             xmin = -Inf, xmax = Inf,
-             ymin= 6, ymax = Inf,
-             alpha = 1,
-             fill = "#8dcdeb")+ #classe 1
-    stat_boxplot(
-      geom = 'errorbar',
-      width = 0.3,
-      position = position_dodge(width = 0.65),
-      fun.data = f,
-    )+
-    stat_boxplot(
-      width = 0.7,
-      fill = '#F8F8FF',
-      color = "black",
-      fun.data = f,
-      geom = "boxplot",
-      outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
-    )+
-    # facet_wrap(~periodo)+
-    labs(
-      title = "Oxigênio Dissolvido",
-      x= NULL,
-      y="mg/L"
-    )+
+   ggplot(
+     aes(
+       x = cod_estacao,
+       y = oxigenio_dissolvido,
+     )
+   )+
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = -Inf, ymax = 2,
+            alpha = 1,
+            fill = "#ac5079")+ #>pior classe
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = 2, ymax = 4,
+            alpha = 1,
+            fill = "#eb5661")+ #classe 4
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = 4, ymax = 5,
+            alpha = 1,
+            fill = "#fcf7ab")+ #classe 3
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = 5, ymax = 6,
+            alpha = 1,
+            fill = "#70c18c")+ #classe 2
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin= 6, ymax = Inf,
+            alpha = 1,
+            fill = "#8dcdeb")+ #classe 1
+   stat_boxplot(
+     fun.data = f,
+     geom = 'errorbar',
+     width = 0.3,
+     position = position_dodge(width = 0.65),
+   )+
+   stat_boxplot(
+     fun.data = f,
+     width = 0.7,
+     fill = '#F8F8FF',
+     color = "black",
+     geom = "boxplot",
+     outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
+   )+
+   # facet_wrap(~periodo)+
+   labs(
+     title = "Oxigênio Dissolvido",
+     x= NULL,
+     y="mg/L"
+   )+
    ggbeeswarm::geom_quasirandom(
-     grouponX = TRUE,
      size = 1.2,
      alpha = .25,
      width = .07,
    )+
    scale_y_continuous(
-      expand = expansion(mult = c(0,0)),
-      n.breaks = 11,
-      # limits = c(-0.3,21)
-      limits = c(
-        min(plan_litoral_medio$oxigenio_dissolvido, na.rm = TRUE),
-        max(plan_litoral_medio$oxigenio_dissolvido, na.rm = TRUE)+1)
-    )+
-   # scale_x_discrete(limits = c("87398500",
-    #                             "87398980",
-    #                             "87398900",
-    #                             "87398950",
-    #                             "87405500",
-    #                             "87406900",
-    #                             "87409900"),
-    #                  labels = c("PM1", "PM2", "PM3", "PM4", "PM5", "PM6", "PM7")
-    # )+
-    geom_smooth(
-      method = "lm",
-      se = FALSE, #se deixar TRUE gera o intervalo de confiança de 95%
-      aes(group = 1),
-      alpha = 0.5,
-      na.rm = TRUE,
-      size = 1
-    )+
-  theme_grafs()
+     expand = expansion(mult = c(0,0)),
+     n.breaks = 11,
+     # limits = c(-0.3,21)
+     limits = c(
+       min(plan_litoral_medio$oxigenio_dissolvido, na.rm = TRUE),
+       max(plan_litoral_medio$oxigenio_dissolvido, na.rm = TRUE)+1)
+   )+
+   # scale_x_discrete(
+   #   limits = c(
+   #     "87332500",
+   #     "87420130",
+   #     "87420150",
+   #     "87420350",
+   #     "87420500",
+   #     "87510010"
+   #   ),
+   #   labels = c(
+   #     "PM1", "PM2", "PM3", "PM4", "PM5", "PM6"
+   #   )
+   # )+
+   geom_smooth(
+     method = "lm",
+     se = FALSE, #se deixar TRUE gera o intervalo de confiança de 95%
+     aes(group = 1),
+     alpha = 0.5,
+     na.rm = TRUE,
+     size = 1
+   )+
+   theme_grafs()
 )
 ```
 
@@ -525,7 +557,7 @@ annotate("rect",
 
 ```{r Gráfico DBO, warning = FALSE, message = FALSE, fig.cap="Demanda Bioquímica de Oxigênio", fold.plot=FALSE}
 (graf_dbo <- ggplot(plan_litoral_medio,
-               aes(x = cod_estacao,
+                    aes(x = cod_estacao,
                    y = dbo))+
    annotate("rect",
             xmin = -Inf, xmax = Inf,
@@ -950,60 +982,63 @@ annotate("rect",
 
 ### Sólidos Totais {#sec-sólidos-totais}
 
-```{r Gráfico SólTot, fig.cap="sólidos-totais", warning = FALSE, message = FALSE, fold.plot=FALSE}
-(graf_solidos_totais <- ggplot(plan_litoral_medio,
-                               aes(cod_estacao,
-                                   solidos_totais))+
-   annotate("rect",
-            xmin = -Inf, xmax = Inf,
-            ymin = 500, ymax = Inf,
-            alpha = 1,
-            fill="#ac5079")+ #>pior classe
-   annotate("rect",
-            xmin = -Inf, xmax = Inf,
-            ymin = -Inf, ymax = 500,
-            alpha = 1,
-            fill="#8dcdeb")+ #classe 1
-   stat_boxplot(geom = 'errorbar',
-                width=0.3,
-                position = position_dodge(width = 0.65))+
-   geom_boxplot(fill='#F8F8FF',
-                color="black",
-                outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
-                width= 0.7)+
-   # facet_wrap(~periodo)+
-   labs(title = "Sólidos totais",
-        x="Estação",
-        y="")+
-   scale_y_continuous(expand = expansion(mult = c(0.01, 0.05)),
-                      n.breaks = 8,
-                      limits = c(0,
-                                 max(plan_litoral_medio$solidos_totais, na.rm = TRUE)),
-                      labels = scales::number_format(accuracy = 1,
-                                                     decimal.mark = ",",
-                                                     big.mark = " "))+
-   ggbeeswarm::geom_quasirandom(
-     size = 1.2,
-     alpha = .25,
-     width = .07,
-   )+
-   # scale_x_discrete(limits = c("87398500", 
-   #                             "87398980", 
-   #                             "87398900", 
-   #                             "87398950", 
-   #                             "87405500", 
-   #                             "87406900", 
-   #                             "87409900"),
-   #                  labels = c("PM1", "PM2", "PM3", "PM4", "PM5", "PM6", "PM7")
-   # )+
-   geom_smooth(method = "lm",
-               se=FALSE, #se deixar TRUE gera o intervalo de confiança de 95%
-               aes(group=1),
-               alpha=.5,
-               na.rm = TRUE,
-               size = 1)+
-   theme_grafs()
-)
+O parâmetro `Sólidos Totais` não teve medições no período analisado, então fica armazenado na tabela como valor vazio, ou `r`NA\`.
+
+```{r Gráfico SólTot, fig.cap="sólidos-totais", warning = FALSE, message = FALSE, fold.plot=FALSE, error = TRUE}
+# (graf_solidos_totais <- ggplot(plan_litoral_medio,
+#                                aes(cod_estacao,
+#                                    solidos_totais))+
+#    annotate("rect",
+#             xmin = -Inf, xmax = Inf,
+#             ymin = 500, ymax = Inf,
+#             alpha = 1,
+#             fill="#ac5079")+ #>pior classe
+#    annotate("rect",
+#             xmin = -Inf, xmax = Inf,
+#             ymin = -Inf, ymax = 500,
+#             alpha = 1,
+#             fill="#8dcdeb")+ #classe 1
+#    stat_boxplot(geom = 'errorbar',
+#                 width=0.3,
+#                 position = position_dodge(width = 0.65))+
+#    geom_boxplot(fill='#F8F8FF',
+#                 color="black",
+#                 outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
+#                 width= 0.7)+
+#    # facet_wrap(~periodo)+
+#    labs(title = "Sólidos totais",
+#         x="Estação",
+#         y="")+
+#    scale_y_continuous(expand = expansion(mult = c(0.01, 0.05)),
+#                       n.breaks = 8,
+#                       limits = c(0,
+#                                  max(plan_litoral_medio$solidos_totais, na.rm = TRUE)
+#                                  ),
+#                       labels = scales::number_format(accuracy = 1,
+#                                                      decimal.mark = ",",
+#                                                      big.mark = " "))+
+#    ggbeeswarm::geom_quasirandom(
+#      size = 1.2,
+#      alpha = .25,
+#      width = .07,
+#    )+
+#    # scale_x_discrete(limits = c("87398500", 
+#    #                             "87398980", 
+#    #                             "87398900", 
+#    #                             "87398950", 
+#    #                             "87405500", 
+#    #                             "87406900", 
+#    #                             "87409900"),
+#    #                  labels = c("PM1", "PM2", "PM3", "PM4", "PM5", "PM6", "PM7")
+#    # )+
+#    geom_smooth(method = "lm",
+#                se=FALSE, #se deixar TRUE gera o intervalo de confiança de 95%
+#                aes(group=1),
+#                alpha=.5,
+#                na.rm = TRUE,
+#                size = 1)+
+#    theme_grafs()
+# )
 ```
 
 ### Condutividade {#sec-condutividade}
@@ -1432,9 +1467,64 @@ Caso queira gerar um mapa com a precipitação mensal, alternar o include para `
 #     ) +
 #     guides(shape = guide_legend(override.aes = list(size = 10)))
 # )
+
+pacman::p_load(
+  DiagrammeR
+)
 ```
 
-# Links úteis {#sec-links-úteis}
+# Referências - Links úteis {#sec-links-úteis}
+
+Recomendo, abaixo, algumas referências. Também deixo uma trilha de aprendizado que julgo ser mais fácil do que a que percorri, conforme diagrama abaixo.
+
+```{r}
+DiagrammeR::grViz("digraph {
+  graph [
+  layout = dot, 
+  rankdir = LR
+  ]
+  
+  node [shape = oval] #rectangle
+  rec1 [label = 'Tentar reproduzir códigos\nde outras pessoas']
+  rec2 [label = 'Entender a gramática\ndos gráficos']
+  rec3 [label =  'Step 3. ???']
+  rec4 [label = 'Step 4. PROFIT']
+  
+  # edge definitions with the node IDs
+  rec1 -> rec2 -> rec3 -> rec4
+  }",
+  height = 50)
+```
+
+```{r, echo=FALSE}
+# a_graph <-
+#    create_graph() %>% 
+#    add_node() %>% 
+#    add_node() %>% 
+#    add_edge(
+#      from = 1,
+#      to = 2
+#    ) %>% 
+#   add_nodes_from_table(
+#     table = node_list_1,
+#     label_col = label
+#   ) %>% 
+#   render_graph(layout = "nicely")
+# 
+# get_node_df(a_graph)
+```
+
+```{mermaid, echo=FALSE}
+  graph TD;
+      A-->B
+```
+
+
+## R
+
+[R for Data Science](https://r4ds.had.co.nz/introduction.html)
+
+> Um dos principais livros para quem está querendo aprender R. Essa é a 1ª versão, publicada em 2017. Em 2023 será publicada a 2ª, através do [link](https://r4ds.hadley.nz).
 
 ## Cheatsheets {#sec-cheatsheets}
 
@@ -1458,13 +1548,37 @@ Caso queira gerar um mapa com a precipitação mensal, alternar o include para `
 
 [RMarkdown: The definitive guide](https://bookdown.org/yihui/rmarkdown/)
 
+## Pacotes
+
 [knitr](https://yihui.org/knitr/options/){.pacotes}
+
+[intro2r](https://intro2r.com/graphics_r.html)
+
+-   Getting started with R and RStudio
+
+-   Some R basics
+
+-   Data in R
+
+-   Graphics with ggplot
+
+-   Simple Statistics in R
+
+-   Reproducible reports with R markdown
 
 ## Canais no Youtube {#sec-canais-no-youtube}
 
 [Pat Schloss](https://www.youtube.com/@Riffomonas) #esse cara é genial
 
 [Ambiental Pro Dev](https://www.youtube.com/@ambientalprodev5379)
+
+[Marcelo Carvalho Ribeiro - Youtube](https://www.youtube.com/@carvalhoribeiro)
+
+-   Tem o [Blog](https://carvalhoribeiro.netlify.app/) dele também.
+
+[Fernanda Peres](https://www.youtube.com/@FernandaPeres)
+
+[Marin Stats](https://www.youtube.com/@marinstatlectures)
 
 # Ainda precisa ser implementado/ajustado {#sec-ainda-precisa-ser-implementadoajustado .unnumbered}
 
