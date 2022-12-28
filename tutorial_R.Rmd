@@ -156,7 +156,7 @@ pacman::p_load(
 #googlesheets4
 ```
 
-Para acessar a página de ajuda dos pacotes ou das funções, basta usar um `?` antes do que se está buscando.  
+Para acessar a página de ajuda dos pacotes ou das funções, basta usar um `?` antes do que se está buscando.
 
 No exemplo abaixo estou verificando os argumentos da função `p_load`, do pacote `pacman`. Na sequência abro o menu de ajuda do pacote `tidyverse`, um dos mais importantes da comunidade R. Outra maneira possível seria utilizando `help(package = 'pacman')`.
 
@@ -306,7 +306,7 @@ sumario <- plan_litoral_medio %>%
       min(oxigenio_dissolvido,
           na.rm = TRUE),
     q1 =
-      quantile(oxigenio_dissolvido, 0.25,
+      quantile(oxigenio_dissolvido, 0.20,
                na.rm = TRUE),
     median =
       median(oxigenio_dissolvido,
@@ -315,7 +315,7 @@ sumario <- plan_litoral_medio %>%
       mean(oxigenio_dissolvido,
            na.rm= TRUE),
     q3 =
-      quantile(oxigenio_dissolvido, 0.75,
+      quantile(oxigenio_dissolvido, 0.80,
                na.rm = TRUE),
     max =
       max(oxigenio_dissolvido,
@@ -399,17 +399,120 @@ f <- function(x) {
 
 # Gráficos {#sec-gráficos .graficos}
 
+## Alterar nome e/ou ordem das estações {#sec-alterar-nome-eou-ordem-das-estações}
+
 > **Atenção:** Tomar muito cuidado com a ordem que estão dispostas as estações. Deve-se sempre respeitar o sentido nascente -\> foz.
 >
-> Conferir a ordem das estações através do [mapa interativo](#sec-mapa-interativo-com-localização-dos-pontos-de-monitoramento).
+> Conferir a ordem das estações através do [mapa interativo](#sec-mapa-interativo-com-localização-dos-pontos-de-monitoramento), QGIS ou Google Earth Pro.
 >
-> Elas acabam ficando fora de ordem por conta do código de ottobacias Para reordenar as estações, atente-se à função `scale_x_discrete` descrito no code chunk abaixo:
+> Elas acabam ficando fora de ordem por conta do código de ottobacias Para reordenar as estações, atente-se à função `scale_x_discrete`.
 
-```{r reordenar estações no gráfico, eval = FALSE}
+Neste exemplo iremos aprender a como mudar o nome das estações e reordená-las.
+
+As estações estão na ordem certa, mas quero alterar o nome delas, como faço?
+
+```{r graf ordem certa, echo=FALSE, warning=FALSE, message=FALSE, fold.plot=FALSE}
+(plan_litoral_medio %>%
+   ggplot(
+     aes(
+       x = cod_estacao,
+       y = oxigenio_dissolvido,
+     )
+   )+
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = -Inf, ymax = 2,
+            alpha = 1,
+            fill = "#ac5079")+ #>pior classe
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = 2, ymax = 4,
+            alpha = 1,
+            fill = "#eb5661")+ #classe 4
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = 4, ymax = 5,
+            alpha = 1,
+            fill = "#fcf7ab")+ #classe 3
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = 5, ymax = 6,
+            alpha = 1,
+            fill = "#70c18c")+ #classe 2
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin= 6, ymax = Inf,
+            alpha = 1,
+            fill = "#8dcdeb")+ #classe 1
+   stat_summary(
+     fun.data = f,
+     geom = 'errorbar',
+     width = 0.3,
+     position = position_dodge(width = 0.65),
+   )+
+   stat_summary(
+     fun.data = f,
+     geom = "boxplot",
+     width = 0.7,
+     fill = '#F8F8FF',
+     color = "black",
+     outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
+   )+
+   # facet_wrap(~periodo)+
+   labs(
+     title = "Oxigênio Dissolvido",
+     x= NULL,
+     y="mg/L"
+   )+
+   ggbeeswarm::geom_quasirandom(
+     size = 1.2,
+     alpha = .25,
+     width = .07,
+   )+
+   scale_y_continuous(
+     expand = expansion(mult = c(0,0)),
+     n.breaks = 11,
+     # limits = c(-0.3,21)
+     limits = c(
+       min(plan_litoral_medio$oxigenio_dissolvido, na.rm = TRUE),
+       max(plan_litoral_medio$oxigenio_dissolvido, na.rm = TRUE)+1)
+   )+
+   # scale_x_discrete(
+   #   limits = c(
+   #     "87420130",
+   #     
+   #     "87332500",
+   #     "87420150",
+   #     "87420350",
+   #     "87420500",
+   #     "87510010"
+   #   ),
+   #   labels = c(
+   #     "PM1", "PM2", "PM3", "PM4", "PM5", "PM6"
+   #   )
+   # )+
+   geom_smooth(
+     method = "lm",
+     se = FALSE, #se deixar TRUE gera o intervalo de confiança de 95%
+     aes(group = 1),
+     alpha = 0.5,
+     na.rm = TRUE,
+     size = 1
+   )+
+   theme_grafs()
+)
+```
+
+------------------------------------------------------------------------
+
+Utilizando o `code chunk` abaixo nós alteramos os nomes das estações para PM (ou Ponto de Monitoramento) seguido de um número. O `PM1` representa o ponto mais próximo das nascentes, enquanto o `PM6` o mais próximo da foz.
+
+```{r renomear estações no gráfico, eval = FALSE}
 scale_x_discrete(
   limits = c(
     "87332500",
     "87420130",
+    
     "87420150",
     "87420350",
     "87420500",
@@ -421,7 +524,334 @@ scale_x_discrete(
 )+
 ```
 
-Obs: Para a Bacia Hidrográfica do Rio Gravataí é necessário
+```{r graf alterar nome est, echo=FALSE, warning=FALSE, message=FALSE, fold.plot=FALSE}
+(plan_litoral_medio %>%
+   ggplot(
+     aes(
+       x = cod_estacao,
+       y = oxigenio_dissolvido,
+     )
+   )+
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = -Inf, ymax = 2,
+            alpha = 1,
+            fill = "#ac5079")+ #>pior classe
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = 2, ymax = 4,
+            alpha = 1,
+            fill = "#eb5661")+ #classe 4
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = 4, ymax = 5,
+            alpha = 1,
+            fill = "#fcf7ab")+ #classe 3
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = 5, ymax = 6,
+            alpha = 1,
+            fill = "#70c18c")+ #classe 2
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin= 6, ymax = Inf,
+            alpha = 1,
+            fill = "#8dcdeb")+ #classe 1
+   stat_summary(
+     fun.data = f,
+     geom = 'errorbar',
+     width = 0.3,
+     position = position_dodge(width = 0.65),
+   )+
+   stat_summary(
+     fun.data = f,
+     geom = "boxplot",
+     width = 0.7,
+     fill = '#F8F8FF',
+     color = "black",
+     outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
+   )+
+   # facet_wrap(~periodo)+
+   labs(
+     title = "Oxigênio Dissolvido",
+     x= NULL,
+     y="mg/L"
+   )+
+   ggbeeswarm::geom_quasirandom(
+     size = 1.2,
+     alpha = .25,
+     width = .07,
+   )+
+   scale_y_continuous(
+     expand = expansion(mult = c(0,0)),
+     n.breaks = 11,
+     # limits = c(-0.3,21)
+     limits = c(
+       min(plan_litoral_medio$oxigenio_dissolvido, na.rm = TRUE),
+       max(plan_litoral_medio$oxigenio_dissolvido, na.rm = TRUE)+1)
+   )+
+   scale_x_discrete(
+     limits = c(
+       "87332500",
+       "87420130",
+       "87420150",
+       "87420350",
+       "87420500",
+       "87510010"
+     ),
+     labels = c(
+       "PM1", "PM2", "PM3", "PM4", "PM5", "PM6"
+     )
+   )+
+   geom_smooth(
+     method = "lm",
+     se = FALSE, #se deixar TRUE gera o intervalo de confiança de 95%
+     aes(group = 1),
+     alpha = 0.5,
+     na.rm = TRUE,
+     size = 1
+   )+
+   theme_grafs()
+)
+```
+
+------------------------------------------------------------------------
+
+Perceba que iremos trocar a ordem das estações. Antes a estação `87332500` era a primeira a ser listada dentro da função `limits = c()`, ela era, portanto, o `PM1`. Agora o `PM1` será a `87420130`. Compare o código e o gráfico abaixo com o anterior.
+
+```{r reordenar estações no gráfico, eval = FALSE}
+scale_x_discrete(
+  limits = c(
+    "87420130",
+    "87332500",
+    
+    "87420150",
+    "87420350",
+    "87420500",
+    "87510010"
+  ),
+  labels = c(
+    "PM1", "PM2", "PM3", "PM4", "PM5", "PM6"
+  )
+)+
+```
+
+```{r graf alterar ordem das est, echo=FALSE, warning=FALSE, message=FALSE, fold.plot=FALSE}
+(plan_litoral_medio %>%
+   ggplot(
+     aes(
+       x = cod_estacao,
+       y = oxigenio_dissolvido,
+     )
+   )+
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = -Inf, ymax = 2,
+            alpha = 1,
+            fill = "#ac5079")+ #>pior classe
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = 2, ymax = 4,
+            alpha = 1,
+            fill = "#eb5661")+ #classe 4
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = 4, ymax = 5,
+            alpha = 1,
+            fill = "#fcf7ab")+ #classe 3
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = 5, ymax = 6,
+            alpha = 1,
+            fill = "#70c18c")+ #classe 2
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin= 6, ymax = Inf,
+            alpha = 1,
+            fill = "#8dcdeb")+ #classe 1
+   stat_summary(
+     fun.data = f,
+     geom = 'errorbar',
+     width = 0.3,
+     position = position_dodge(width = 0.65),
+   )+
+   stat_summary(
+     fun.data = f,
+     geom = "boxplot",
+     width = 0.7,
+     fill = '#F8F8FF',
+     color = "black",
+     outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
+   )+
+   # facet_wrap(~periodo)+
+   labs(
+     title = "Oxigênio Dissolvido",
+     x= NULL,
+     y="mg/L"
+   )+
+   ggbeeswarm::geom_quasirandom(
+     size = 1.2,
+     alpha = .25,
+     width = .07,
+   )+
+   scale_y_continuous(
+     expand = expansion(mult = c(0,0)),
+     n.breaks = 11,
+     # limits = c(-0.3,21)
+     limits = c(
+       min(plan_litoral_medio$oxigenio_dissolvido, na.rm = TRUE),
+       max(plan_litoral_medio$oxigenio_dissolvido, na.rm = TRUE)+1)
+   )+
+   scale_x_discrete(
+  limits = c(
+    "87420130",
+    
+    "87332500",
+    "87420150",
+    "87420350",
+    "87420500",
+    "87510010"
+  ),
+  labels = c(
+    "PM1", "PM2", "PM3", "PM4", "PM5", "PM6"
+  )
+)+
+   geom_smooth(
+     method = "lm",
+     se = FALSE, #se deixar TRUE gera o intervalo de confiança de 95%
+     aes(group = 1),
+     alpha = 0.5,
+     na.rm = TRUE,
+     size = 1
+   )+
+   theme_grafs()
+)
+```
+
+------------------------------------------------------------------------
+
+"Ok mas... e se eu não quiser alterar o código ottobacias para `PM1`, `PM2`, só a ordem das estações, o que devo fazer?" Basta replicar a sequência *correta* das estações de `limits = c()` dentro da função `labels = c()`.
+
+```{r reordenar estações no gráfico sem alterar nome, eval = FALSE}
+   scale_x_discrete(
+     limits = c(
+       "87420130",
+       "87332500",
+       "87420150",
+       "87420350",
+       "87420500",
+       "87510010"
+     ),
+     labels = c(
+       "87420130",
+       "87332500",
+       "87420150",
+       "87420350",
+       "87420500",
+       "87510010"
+     )
+   )+
+```
+
+```{r graf alterar ordem das est sem alterar nome, echo=FALSE, warning=FALSE, message=FALSE, fold.plot=FALSE}
+(plan_litoral_medio %>%
+   ggplot(
+     aes(
+       x = cod_estacao,
+       y = oxigenio_dissolvido,
+     )
+   )+
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = -Inf, ymax = 2,
+            alpha = 1,
+            fill = "#ac5079")+ #>pior classe
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = 2, ymax = 4,
+            alpha = 1,
+            fill = "#eb5661")+ #classe 4
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = 4, ymax = 5,
+            alpha = 1,
+            fill = "#fcf7ab")+ #classe 3
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = 5, ymax = 6,
+            alpha = 1,
+            fill = "#70c18c")+ #classe 2
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin= 6, ymax = Inf,
+            alpha = 1,
+            fill = "#8dcdeb")+ #classe 1
+   stat_summary(
+     fun.data = f,
+     geom = 'errorbar',
+     width = 0.3,
+     position = position_dodge(width = 0.65),
+   )+
+   stat_summary(
+     fun.data = f,
+     geom = "boxplot",
+     width = 0.7,
+     fill = '#F8F8FF',
+     color = "black",
+     outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
+   )+
+   # facet_wrap(~periodo)+
+   labs(
+     title = "Oxigênio Dissolvido",
+     x= NULL,
+     y="mg/L"
+   )+
+   ggbeeswarm::geom_quasirandom(
+     size = 1.2,
+     alpha = .25,
+     width = .07,
+   )+
+   scale_y_continuous(
+     expand = expansion(mult = c(0,0)),
+     n.breaks = 11,
+     # limits = c(-0.3,21)
+     limits = c(
+       min(plan_litoral_medio$oxigenio_dissolvido, na.rm = TRUE),
+       max(plan_litoral_medio$oxigenio_dissolvido, na.rm = TRUE)+1)
+   )+
+   scale_x_discrete(
+     limits = c(
+       "87420130",
+       "87332500",
+       "87420150",
+       "87420350",
+       "87420500",
+       "87510010"
+     ),
+     labels = c(
+       "87420130",
+       "87332500",
+       "87420150",
+       "87420350",
+       "87420500",
+       "87510010"
+     )
+   )+
+   geom_smooth(
+     method = "lm",
+     se = FALSE, #se deixar TRUE gera o intervalo de confiança de 95%
+     aes(group = 1),
+     alpha = 0.5,
+     na.rm = TRUE,
+     size = 1
+   )+
+   theme_grafs()
+)
+```
+
+------------------------------------------------------------------------
+
+Obs: Para a Bacia Hidrográfica do Rio Gravataí esse processo é necessário.
 
 > Sempre tomar cuidado com os limites do **eixo y**. Deixei como padrão o R buscar automaticamente qual o valor mínimo e máximo daquele parâmetro, mas o ideal é que se ajuste caso a caso.
 
@@ -495,18 +925,18 @@ annotate("rect",
             ymin= 6, ymax = Inf,
             alpha = 1,
             fill = "#8dcdeb")+ #classe 1
-   stat_boxplot(
+   stat_summary(
      fun.data = f,
      geom = 'errorbar',
      width = 0.3,
      position = position_dodge(width = 0.65),
    )+
-   stat_boxplot(
+   stat_summary(
      fun.data = f,
+     geom = "boxplot",
      width = 0.7,
      fill = '#F8F8FF',
      color = "black",
-     geom = "boxplot",
      outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
    )+
    # facet_wrap(~periodo)+
@@ -579,20 +1009,20 @@ annotate("rect",
             ymin = 0, ymax = 3,
             alpha = 1,
             fill = "#8dcdeb")+ #classe 1
-   stat_boxplot(
-      geom = 'errorbar',
-      width = 0.3,
-      position = position_dodge(width = 0.65),
-      fun.data = f,
-    )+
-    stat_boxplot(
-      width = 0.7,
-      fill = '#F8F8FF',
-      color = "black",
-      fun.data = f,
-      geom = "boxplot",
-      outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
-    )+
+   stat_summary(
+     fun.data = f,
+     geom = 'errorbar',
+     width = 0.3,
+     position = position_dodge(width = 0.65),
+   )+
+   stat_summary(
+     fun.data = f,
+     geom = "boxplot",
+     width = 0.7,
+     fill = '#F8F8FF',
+     color = "black",
+     outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
+   )+
    # facet_wrap(~periodo)+
    labs(title = "Demanda Bioquímica de Oxigênio",
         x="Estação",
@@ -656,13 +1086,20 @@ annotate("rect",
             ymin = 0, ymax = 160,
             alpha = 1,
             fill = "#8dcdeb")+ #classe 1
-   stat_boxplot(geom = 'errorbar',
-                width=0.3,
-                position = position_dodge(width = 0.65))+
-   geom_boxplot(fill='#F8F8FF',
-                color="black",
-                outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
-                width= 0.7)+
+   stat_summary(
+     fun.data = f,
+     geom = 'errorbar',
+     width = 0.3,
+     position = position_dodge(width = 0.65),
+   )+
+   stat_summary(
+     fun.data = f,
+     geom = "boxplot",
+     width = 0.7,
+     fill = '#F8F8FF',
+     color = "black",
+     outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
+   )+
    # facet_wrap(~periodo)+
    labs(title = "*Escherichia coli*",
         x="Estação",
@@ -733,13 +1170,20 @@ annotate("rect",
             ymin = 0, ymax = 0.1,
             alpha = 1,
             fill = "#8dcdeb")+ #classe 1
-   stat_boxplot(geom = 'errorbar',
-                width=0.3,
-                position = position_dodge(width = 0.65))+
-   geom_boxplot(fill='#F8F8FF',
-                color="black",
-                outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
-                width= 0.7)+
+   stat_summary(
+     fun.data = f,
+     geom = 'errorbar',
+     width = 0.3,
+     position = position_dodge(width = 0.65),
+   )+
+   stat_summary(
+     fun.data = f,
+     geom = "boxplot",
+     width = 0.7,
+     fill = '#F8F8FF',
+     color = "black",
+     outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
+   )+
    # facet_wrap(~periodo)+
    labs(title = "Fósforo total",
         x="Estação",
@@ -798,13 +1242,20 @@ annotate("rect",
             ymin = 0, ymax = 3.7,
             alpha = 1,
             fill = "#8dcdeb")+ #classe 1
-   stat_boxplot(geom = 'errorbar',
-                width=0.3,
-                position = position_dodge(width = 0.65))+
-   geom_boxplot(fill='#F8F8FF',
-                color="black",
-                outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
-                width= 0.7)+
+   stat_summary(
+     fun.data = f,
+     geom = 'errorbar',
+     width = 0.3,
+     position = position_dodge(width = 0.65),
+   )+
+   stat_summary(
+     fun.data = f,
+     geom = "boxplot",
+     width = 0.7,
+     fill = '#F8F8FF',
+     color = "black",
+     outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
+   )+
    # facet_wrap(~periodo)+
    labs(title = "Nitrogênio amoniacal",
         x="Estação",
@@ -864,13 +1315,20 @@ annotate("rect",
             ymin = 0, ymax = 40,
             alpha = 1,
             fill = "#8dcdeb")+ #classe 1
-   stat_boxplot(geom = 'errorbar',
-                width=0.3,
-                position = position_dodge(width = 0.65))+
-   geom_boxplot(fill='#F8F8FF',
-                color="black",
-                outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
-                width= 0.7)+
+   stat_summary(
+     fun.data = f,
+     geom = 'errorbar',
+     width = 0.3,
+     position = position_dodge(width = 0.65),
+   )+
+   stat_summary(
+     fun.data = f,
+     geom = "boxplot",
+     width = 0.7,
+     fill = '#F8F8FF',
+     color = "black",
+     outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
+   )+
    # facet_wrap(~periodo)+
    labs(title = "Turbidez",
         x="Estação",
@@ -938,13 +1396,20 @@ annotate("rect",
             ymax=9,
             alpha=1,
             fill="#8dcdeb")+ #classe 1
-   stat_boxplot(geom = 'errorbar',
-                width=0.3,
-                position = position_dodge(width = 0.65))+
-   geom_boxplot(fill='#F8F8FF',
-                color="black",
-                outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
-                width= 0.7)+
+   stat_summary(
+     fun.data = f,
+     geom = 'errorbar',
+     width = 0.3,
+     position = position_dodge(width = 0.65),
+   )+
+   stat_summary(
+     fun.data = f,
+     geom = "boxplot",
+     width = 0.7,
+     fill = '#F8F8FF',
+     color = "black",
+     outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
+   )+
    # facet_wrap(~periodo)+
    labs(title = "pH",
         x="Estação",
@@ -998,13 +1463,20 @@ O parâmetro `Sólidos Totais` não teve medições no período analisado, entã
 #             ymin = -Inf, ymax = 500,
 #             alpha = 1,
 #             fill="#8dcdeb")+ #classe 1
-#    stat_boxplot(geom = 'errorbar',
-#                 width=0.3,
-#                 position = position_dodge(width = 0.65))+
-#    geom_boxplot(fill='#F8F8FF',
-#                 color="black",
-#                 outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
-#                 width= 0.7)+
+# stat_summary(
+#      fun.data = f,
+#      geom = 'errorbar',
+#      width = 0.3,
+#      position = position_dodge(width = 0.65),
+#    )+
+#    stat_summary(
+#      fun.data = f,
+#      geom = "boxplot",
+#      width = 0.7,
+#      fill = '#F8F8FF',
+#      color = "black",
+#      outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
+#    )+
 #    # facet_wrap(~periodo)+
 #    labs(title = "Sólidos totais",
 #         x="Estação",
@@ -1057,13 +1529,20 @@ O parâmetro `Sólidos Totais` não teve medições no período analisado, entã
             ymin = 0, ymax = 500,
             alpha = 1,
             fill = "#8dcdeb")+ #classe 1
-   stat_boxplot(geom = 'errorbar',
-                width=0.3,
-                position = position_dodge(width = 0.65))+
-   geom_boxplot(fill='#F8F8FF',
-                color="black",
-                outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
-                width= 0.7)+
+  stat_summary(
+     fun.data = f,
+     geom = 'errorbar',
+     width = 0.3,
+     position = position_dodge(width = 0.65),
+   )+
+   stat_summary(
+     fun.data = f,
+     geom = "boxplot",
+     width = 0.7,
+     fill = '#F8F8FF',
+     color = "black",
+     outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
+   )+
    # facet_wrap(~periodo)+
    labs(title = "Condutividade elétrica",
         x="Estação",
@@ -1518,7 +1997,6 @@ DiagrammeR::grViz("digraph {
   graph TD;
       A-->B
 ```
-
 
 ## R
 
