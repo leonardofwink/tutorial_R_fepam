@@ -76,7 +76,7 @@ Quando quiser renderizar o código para ter a mesma visualização como a do for
 
 > As linhas de código que começam com `#` são **comentários**. Elas não impactam o resultado final do código.
 
-`Ctrl+Alt+I` -\> cria um novo *code chunk*.
+`Ctrl+Alt+I` -\> cria um novo *code chunk*, isto é, "pedaço de código", é a área executável das funções que iremos utilizar.
 
 `Ctrl+I` -\> Indenta o código (ajusta a tabulação entre as linhas, facilita a leitura do código).
 
@@ -158,11 +158,16 @@ pacman::p_load(
 
 Para acessar a página de ajuda dos pacotes ou das funções, basta usar um `?` antes do que se está buscando.
 
-No exemplo abaixo estou verificando os argumentos da função `p_load`, do pacote `pacman`. Na sequência abro o menu de ajuda do pacote `tidyverse`, um dos mais importantes da comunidade R. Outra maneira possível seria utilizando `help(package = 'pacman')`.
+No `code chunk` acima nós utilizamos uma função `p_load` que está dentro do pacote `pacman`. Para isso utilizamos o comando `pacman::p_load`, isto é, estamos dizendo para o `R` que dentro do pacote `pacman` quero usar especificamente a função `p_load`.
+
+No exemplo abaixo estou verificando os argumentos dessa função. Na sequência abro o menu de ajuda do pacote `tidyverse`, um dos mais importantes da comunidade R. Outra maneira possível seria utilizando `help(package = 'pacman')`.
 
 ![?help](images/20221227-162335-002.png)
 
 # Importação dos dados {#sec-importação-dos-dados}
+
+Utilizando o `code chunk` abaixo você estará importando a mesma planilha que utilizei. Salvei esse arquivo na nuvem, via GitHub. Estou importando-a utilizando o link para acessá-la online. 
+
 
 ```{r replicando importação dos dados, warning=FALSE, message=FALSE}
 plan_litoral_medio <- read_delim(
@@ -250,6 +255,8 @@ plan_litoral_medio <- read_delim(
   )
 ```
 
+Você irá fazer as alterações nesse `code chunk` abaixo.  
+Será necessário que você altere o primeiro argumento da função `read_excel`, que é o caminho, ou seja: dizer ao `R` onde que a planilha está. 
 ```{r Importando os dados}
 plan_litoral_medio_alterar <- read_excel(
   "C:/Users/Léo/Downloads/plan_litoral_medio.xls", #alteracao_1
@@ -615,7 +622,7 @@ scale_x_discrete(
 )
 ```
 
-------------------------------------------------------------------------
+<!-- ------------------------------------------------------------------------ -->
 
 Perceba que iremos trocar a ordem das estações. Antes a estação `87332500` era a primeira a ser listada dentro da função `limits = c()`, ela era, portanto, o `PM1`. Agora o `PM1` será a `87420130`. Compare o código e o gráfico abaixo com o anterior.
 
@@ -728,7 +735,7 @@ scale_x_discrete(
 )
 ```
 
-------------------------------------------------------------------------
+<!-- ------------------------------------------------------------------------ -->
 
 "Ok mas... e se eu não quiser alterar o código ottobacias para `PM1`, `PM2`, só a ordem das estações, o que devo fazer?" Basta replicar a sequência *correta* das estações de `limits = c()` dentro da função `labels = c()`.
 
@@ -849,7 +856,7 @@ scale_x_discrete(
 )
 ```
 
-------------------------------------------------------------------------
+<!-- ------------------------------------------------------------------------ -->
 
 Obs: Para a Bacia Hidrográfica do Rio Gravataí esse processo é necessário.
 
@@ -1447,70 +1454,70 @@ annotate("rect",
 
 ### Sólidos Totais {#sec-sólidos-totais}
 
-O parâmetro `Sólidos Totais` não teve medições no período analisado, então fica armazenado na tabela como valor vazio, ou `r`NA\`.
+O parâmetro `Sólidos Totais` não teve medições no período analisado, então fica armazenado na tabela como valor vazio, ou `r`NA\`. Quando você for fazer análise e tiver valores, altere o `eval` para `TRUE`.
 
-```{r Gráfico SólTot, fig.cap="sólidos-totais", warning = FALSE, message = FALSE, fold.plot=FALSE, error = TRUE}
-# (graf_solidos_totais <- ggplot(plan_litoral_medio,
-#                                aes(cod_estacao,
-#                                    solidos_totais))+
-#    annotate("rect",
-#             xmin = -Inf, xmax = Inf,
-#             ymin = 500, ymax = Inf,
-#             alpha = 1,
-#             fill="#ac5079")+ #>pior classe
-#    annotate("rect",
-#             xmin = -Inf, xmax = Inf,
-#             ymin = -Inf, ymax = 500,
-#             alpha = 1,
-#             fill="#8dcdeb")+ #classe 1
-# stat_summary(
-#      fun.data = f,
-#      geom = 'errorbar',
-#      width = 0.3,
-#      position = position_dodge(width = 0.65),
-#    )+
-#    stat_summary(
-#      fun.data = f,
-#      geom = "boxplot",
-#      width = 0.7,
-#      fill = '#F8F8FF',
-#      color = "black",
-#      outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
-#    )+
-#    # facet_wrap(~periodo)+
-#    labs(title = "Sólidos totais",
-#         x="Estação",
-#         y="")+
-#    scale_y_continuous(expand = expansion(mult = c(0.01, 0.05)),
-#                       n.breaks = 8,
-#                       limits = c(0,
-#                                  max(plan_litoral_medio$solidos_totais, na.rm = TRUE)
-#                                  ),
-#                       labels = scales::number_format(accuracy = 1,
-#                                                      decimal.mark = ",",
-#                                                      big.mark = " "))+
-#    ggbeeswarm::geom_quasirandom(
-#      size = 1.2,
-#      alpha = .25,
-#      width = .07,
-#    )+
-#    # scale_x_discrete(limits = c("87398500", 
-#    #                             "87398980", 
-#    #                             "87398900", 
-#    #                             "87398950", 
-#    #                             "87405500", 
-#    #                             "87406900", 
-#    #                             "87409900"),
-#    #                  labels = c("PM1", "PM2", "PM3", "PM4", "PM5", "PM6", "PM7")
-#    # )+
-#    geom_smooth(method = "lm",
-#                se=FALSE, #se deixar TRUE gera o intervalo de confiança de 95%
-#                aes(group=1),
-#                alpha=.5,
-#                na.rm = TRUE,
-#                size = 1)+
-#    theme_grafs()
-# )
+```{r Gráfico SólTot, fig.cap="sólidos-totais", warning = FALSE, message = FALSE, fold.plot=FALSE, error = TRUE, eval=FALSE}
+(graf_solidos_totais <- ggplot(plan_litoral_medio,
+                               aes(cod_estacao,
+                                   solidos_totais))+
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = 500, ymax = Inf,
+            alpha = 1,
+            fill="#ac5079")+ #>pior classe
+   annotate("rect",
+            xmin = -Inf, xmax = Inf,
+            ymin = -Inf, ymax = 500,
+            alpha = 1,
+            fill="#8dcdeb")+ #classe 1
+stat_summary(
+     fun.data = f,
+     geom = 'errorbar',
+     width = 0.3,
+     position = position_dodge(width = 0.65),
+   )+
+   stat_summary(
+     fun.data = f,
+     geom = "boxplot",
+     width = 0.7,
+     fill = '#F8F8FF',
+     color = "black",
+     outlier.shape = 1, #se deixar NA fica só o jitter, se não, deixa 1
+   )+
+   # facet_wrap(~periodo)+
+   labs(title = "Sólidos totais",
+        x="Estação",
+        y="")+
+   scale_y_continuous(expand = expansion(mult = c(0.01, 0.05)),
+                      n.breaks = 8,
+                      limits = c(0,
+                                 max(plan_litoral_medio$solidos_totais, na.rm = TRUE)
+                                 ),
+                      labels = scales::number_format(accuracy = 1,
+                                                     decimal.mark = ",",
+                                                     big.mark = " "))+
+   ggbeeswarm::geom_quasirandom(
+     size = 1.2,
+     alpha = .25,
+     width = .07,
+   )+
+   # scale_x_discrete(limits = c("87398500",
+   #                             "87398980",
+   #                             "87398900",
+   #                             "87398950",
+   #                             "87405500",
+   #                             "87406900",
+   #                             "87409900"),
+   #                  labels = c("PM1", "PM2", "PM3", "PM4", "PM5", "PM6", "PM7")
+   # )+
+   geom_smooth(method = "lm",
+               se=FALSE, #se deixar TRUE gera o intervalo de confiança de 95%
+               aes(group=1),
+               alpha=.5,
+               na.rm = TRUE,
+               size = 1)+
+   theme_grafs()
+)
 ```
 
 ### Condutividade {#sec-condutividade}
@@ -1725,13 +1732,13 @@ parametros_iqa_lit_medio %>%
 
 ### Correlação entre parâmetros que compõem o IQA com significância estatística
 
-```{r graf-correl-estatistica, time_it = TRUE, warning=FALSE, message = FALSE}
-# Gráfico das correlações entre todos os parâmetros com significância
+Esse processo demanda bastante processamento, para desabilitá-lo deixe `eval = FALSE`.
+```{r graf-correl-estatistica, time_it = TRUE, warning=FALSE, message = FALSE, eval = TRUE}
 correl_IQA_lit_medio <- parametros_iqa_lit_medio %>%
   dplyr::select(-cod_estacao) %>%
   ggpairs(title = "Correlação entre parâmetros que compõem o IQA",
           axisLabels = "show")
-# correl_IQA_lit_medio
+correl_IQA_lit_medio
 ```
 
 ## Salvar os gráficos {#sec-salvar-os-gráficos}
@@ -1740,7 +1747,6 @@ Replicar esse modelo pros gráficos que deseja salvar.\
 1. Criar novo code chunk (`Ctrl+Alt+I`)\
 2. Copiar a fórmula abaixo\
 3. Colar nesse novo code chunk\
-4.
 
 Os gráficos ficarão salvos em uma pasta que irá ser criada a partir do código.
 
@@ -1829,126 +1835,123 @@ leaflet(RS) %>%
 
 ## Mapa de precipitação anual
 
-```{r Extraindo os dados raster de precipitação, message = FALSE, warning = FALSE}
-# st_centroid(RS)
-# 
-# Prec <- getData(
-#   "worldclim", 
-#   var = "prec", 
-#   res = 0.5, 
-#   lat = c(-30.033056, -29.68417), #procurar lat long no google e alterar aqui
-#   lon = c(-51.230000, -53.80694)
-# )
-# 
-# Prec_RS <- Prec %>% 
-#   crop(RS) %>% 
-#   mask(RS, na.rm = TRUE)
-# 
-# plot(Prec_RS)
-# 
-# PPAnual_RS <- do.call("sum", 
-#                        unstack(Prec_RS))
-# plot(PPAnual_RS)
+Esse processo demanda bastante processamento, para desabilitá-lo deixe `eval = FALSE`.
+```{r Extraindo os dados raster de precipitação, eval = TRUE, message = FALSE, warning = FALSE}
+st_centroid(RS)
+
+Prec <- getData(
+  "worldclim",
+  var = "prec",
+  res = 0.5,
+  lat = c(-30.033056, -29.68417), #procurar lat long no google e alterar aqui
+  lon = c(-51.230000, -53.80694)
+)
+
+Prec_RS <- Prec %>%
+  crop(RS) %>%
+  mask(RS, na.rm = TRUE)
+
+plot(Prec_RS)
+
+PPAnual_RS <- do.call("sum",
+                       unstack(Prec_RS))
+plot(PPAnual_RS)
 ```
 
-```{r Elaborando os meses de precipitação, message = FALSE, warning = FALSE}
-# vls <- rasterToPoints(Prec_RS) %>% 
-#   as_tibble() %>% 
-#   gather(var, value, -x, -y) %>% 
-#   mutate(mes = parse_number(var)) %>% 
-#   inner_join(., lbl, by = 'mes') %>% 
-#   dplyr::select(x, y, month_abb, value) %>% 
-#   mutate(month_abb = factor(month_abb, levels = month.abb))
-# 
-# vls %>% 
-#   filter(month_abb == 'Jan')
-# 
-# summary(vls$value) #descobre o valor mínimo, médio e máximo de precipitação
+```{r Elaborando os meses de precipitação, message = FALSE, warning = FALSE, eval = TRUE}
+vls <- rasterToPoints(Prec_RS) %>%
+  as_tibble() %>%
+  gather(var, value, -x, -y) %>%
+  mutate(mes = parse_number(var)) %>%
+  inner_join(., lbl, by = 'mes') %>%
+  dplyr::select(x, y, month_abb, value) %>%
+  mutate(month_abb = factor(month_abb, levels = month.abb))
+
+vls %>%
+  filter(month_abb == 'Jan')
+
+summary(vls$value) #descobre o valor mínimo, médio e máximo de precipitação
 ```
 
 ## Mapa com precipitação mensal
 
-Caso queira gerar um mapa com a precipitação mensal, alternar o include para `TRUE`. A geração desse mapa demanda bastante processamento, recomendável manter `include = FALSE` e `echo = FALSE`.
+Caso queira gerar um mapa com a precipitação mensal, alternar o `eval` para `TRUE`. A geração desse mapa demanda bastante processamento, recomendável manter `include = FALSE` e `echo = FALSE`.
 
-```{r mapas-precipitacao-mensal, include = TRUE, echo = FALSE}
-# cores1<- c('#ff4223','#f19e21','#ffee21','#00ffff', '#10aebe', '#165dff','#9331dc')
-# cores2<- c('#9331dc', '#165dff', '#10aebe', '#00ffff', '#ffee21', '#f19e21', '#ff4223')
-# 
-# 
-# (gg <- ggplot(vls)  +
-#     geom_tile(aes(x = x, 
-#                   y = y, 
-#                   fill = value)) +
-#     scale_fill_gradientn(colours = cores1, 
-#                          na.value = 'white', 
-#                          limits = c(0, 250), 
-#                          breaks = seq(0, 250, 25)) +
-#     geom_sf(data = RS, 
-#             fill = NA, 
-#             color = 'black', 
-#             size = 0.2)+
-#     facet_wrap(~ month_abb) +
-#     # scale_x_continuous(breaks = c(-72.5, -71.0, -69.5)) +
-#     ggtitle("Precipitação mensal - RS")+
-#     labs(title = 'Precipitação Mensal - RS',
-#          fill = 'mm',  
-#          x = 'Longitude', 
-#          y = 'Latitude', 
-#          caption = "Leonardo Fernandes Wink") +
-#     labs(
-#       caption = "Fonte: https://osmdata.openstreetmap.de/"
-#     )+
-#     theme_bw() +
-#     theme(
-#       plot.background = element_rect(fill = "white"),
-#       panel.grid.major = element_blank(),
-#       panel.grid.minor = element_blank(),
-#       panel.border = element_rect(size = 2, 
-#                                   color="white"),
-#       legend.key.width = unit(5, 'line'),
-#       legend.position = 'bottom',
-#       plot.title = element_text(
-#         size = 16, 
-#         hjust = 0.5, 
-#         color = "black", 
-#         face = "bold"
-#       ),
-#       axis.text.x = element_text(
-#         face = "bold", 
-#         color = "black", 
-#         size = 8
-#       ),
-#       axis.text.y = element_text(
-#         angle = 90,
-#         face = "bold", 
-#         color = "black", 
-#         size = 8
-#       ),
-#       strip.text = element_text(
-#         face= 'bold', 
-#         size= 14, 
-#         hjust= 0.5, 
-#         color= 'black'
-#       ),
-#       strip.background = element_rect(fill='white'),
-#       plot.subtitle = element_text(
-#         size = 11, 
-#         hjust = 0.8, 
-#         face = "italic", 
-#         color = "red", #"#4e4d47"
-#         family="serif"
-#       ),
-#       plot.caption = element_text(
-#         size = 10, 
-#         hjust = 0.95, 
-#         color = "black",
-#       )
-#     ) +
-#     guides(shape = guide_legend(override.aes = list(size = 10)))
-# )
+```{r mapas-precipitacao-mensal, include = TRUE, echo = FALSE, eval=TRUE}
+cores1<- c('#ff4223','#f19e21','#ffee21','#00ffff', '#10aebe', '#165dff','#9331dc')
+cores2<- c('#9331dc', '#165dff', '#10aebe', '#00ffff', '#ffee21', '#f19e21', '#ff4223')
 
-pacman::p_load(
-  DiagrammeR
+
+(gg <- ggplot(vls)  +
+    geom_tile(aes(x = x,
+                  y = y,
+                  fill = value)) +
+    scale_fill_gradientn(colours = cores1,
+                         na.value = 'white',
+                         limits = c(0, 250),
+                         breaks = seq(0, 250, 25)) +
+    geom_sf(data = RS,
+            fill = NA,
+            color = 'black',
+            size = 0.2)+
+    facet_wrap(~ month_abb) +
+    # scale_x_continuous(breaks = c(-72.5, -71.0, -69.5)) +
+    ggtitle("Precipitação mensal - RS")+
+    labs(title = 'Precipitação Mensal - RS',
+         fill = 'mm',
+         x = 'Longitude',
+         y = 'Latitude',
+         caption = "Leonardo Fernandes Wink") +
+    labs(
+      caption = "Fonte: https://osmdata.openstreetmap.de/"
+    )+
+    theme_bw() +
+    theme(
+      plot.background = element_rect(fill = "white"),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      panel.border = element_rect(size = 2,
+                                  color="white"),
+      legend.key.width = unit(5, 'line'),
+      legend.position = 'bottom',
+      plot.title = element_text(
+        size = 16,
+        hjust = 0.5,
+        color = "black",
+        face = "bold"
+      ),
+      axis.text.x = element_text(
+        face = "bold",
+        color = "black",
+        size = 8
+      ),
+      axis.text.y = element_text(
+        angle = 90,
+        face = "bold",
+        color = "black",
+        size = 8
+      ),
+      strip.text = element_text(
+        face= 'bold',
+        size= 14,
+        hjust= 0.5,
+        color= 'black'
+      ),
+      strip.background = element_rect(fill='white'),
+      plot.subtitle = element_text(
+        size = 11,
+        hjust = 0.8,
+        face = "italic",
+        color = "red", #"#4e4d47"
+        family="serif"
+      ),
+      plot.caption = element_text(
+        size = 10,
+        hjust = 0.95,
+        color = "black",
+      )
+    ) +
+    guides(shape = guide_legend(override.aes = list(size = 10)))
 )
 ```
 
@@ -1956,46 +1959,34 @@ pacman::p_load(
 
 Recomendo, abaixo, algumas referências. Também deixo uma trilha de aprendizado que julgo ser mais fácil do que a que percorri, conforme diagrama abaixo.
 
-```{r}
-DiagrammeR::grViz("digraph {
+```{r diagrama}
+pacman::p_load(
+  DiagrammeR
+)
+DiagrammeR::grViz(
+  "digraph {
   graph [
-  layout = dot, 
+  layout = dot,
   rankdir = LR
   ]
-  
+
   node [shape = oval] #rectangle
   rec1 [label = 'Tentar reproduzir códigos\nde outras pessoas']
   rec2 [label = 'Entender a gramática\ndos gráficos']
-  rec3 [label =  'Step 3. ???']
-  rec4 [label = 'Step 4. PROFIT']
-  
+  rec3 [label = 'Fazer um projeto\ndo zero']
+  rec4 [label = 'Aprender RMarkdown']
+  rec5 [label = 'procurar no Youtube/\nStackOverFlow']
+  rec6 [label = 'pacotes']
+  rec7 [label = 'tidyverse, ggplot2']
+  rec8 [label = 'Desenvolver um Shiny App']
+
   # edge definitions with the node IDs
-  rec1 -> rec2 -> rec3 -> rec4
+  rec1 -> rec5
+  rec2 -> rec6 -> rec7
+  rec1 -> rec2 -> rec3 -> rec4 -> rec8
   }",
-  height = 50)
-```
-
-```{r, echo=FALSE}
-# a_graph <-
-#    create_graph() %>% 
-#    add_node() %>% 
-#    add_node() %>% 
-#    add_edge(
-#      from = 1,
-#      to = 2
-#    ) %>% 
-#   add_nodes_from_table(
-#     table = node_list_1,
-#     label_col = label
-#   ) %>% 
-#   render_graph(layout = "nicely")
-# 
-# get_node_df(a_graph)
-```
-
-```{mermaid, echo=FALSE}
-  graph TD;
-      A-->B
+  # height = 500
+)
 ```
 
 ## R
@@ -2079,7 +2070,7 @@ GitHub: <https://github.com/leonardofwink/>
 
 LinkedIn: <https://www.linkedin.com/in/leonardofwink/>
 
-```{r include = FALSE}
+```{r nome, include = FALSE}
 # no YAML do code chunk:
 # pra esconder o código
 
